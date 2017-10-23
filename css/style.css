@@ -1,0 +1,50 @@
+@import "https://necolas.github.io/normalize.css/7.0.0/normalize.css";
+
+.container{
+  width: 100%;
+}
+
+#board{
+  width: auto; 
+  margin: 20px auto;
+  min-width: 100px;
+  max-width: 600px;
+  max-height: 600px;
+  background-color: black
+}
+
+.row{
+  display: flex;
+  width: 100%;
+  min-height: 1px;
+}
+
+.field{
+  width: 50px;
+  height: 50px;
+  padding: 3px;
+  text-align: center;
+  background-color: white;
+  border: 2px solid grey;
+  position: relative;
+}
+
+.empty{
+
+}
+
+.weapon{
+  background-color: rgba(255, 0, 237, 0.29);
+}
+
+.unavailable{
+  background-color: rgba(3, 9, 88, 0.29);
+}
+
+.playerOne{
+  background-color: red;
+}
+
+.playerTwo{
+  background-color: green;
+}
