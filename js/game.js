@@ -177,10 +177,10 @@
     }
 
     // Move player to new field
-    this.changePosition = function (newCoordinates, boardObject) {
+    this.changePosition = function (boardObject, [x, y]) {
       // Assign new coordinates
-      this.x = newCoordinates[0];
-      this.y = newCoordinates[1];
+      this.x = x;
+      this.y = y;
       // Update available movement range
       this.range = this.calculateRange(boardObject);
     }
@@ -203,7 +203,7 @@
 
       // Counter of turns
       this.turnCounter = 0;
-      
+
       // Initialize game board
       this.board = new Board();
       this.board.init(boardSize);
@@ -233,14 +233,15 @@
       this.playerTwo.range = this.playerTwo.calculateRange(this.board);
 
       // Initialize game state
-      this.state = 1;
+      this.state = 0;
     }
 
     // Update board fields with player class on position change
     this.movePlayer = function (player, newCoordinates) {
       this.board.fields[player.x][player.y] = this.board.fieldClasses.empty;
-      player.changePosition(newCoordinates, this.board);
+      player.changePosition(this.board, newCoordinates);
       this.board.fields[player.x][player.y] = this.board.fieldClasses.player;
+      this.turnCounter++;
     }
 
     // Game states
