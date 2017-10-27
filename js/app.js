@@ -44,9 +44,9 @@ $(document).ready(function() {
   myGame.init(10, 3, 100, 0);
 
   console.log(myGame);
+  var display = new Display()
 
-
-  displayBoard(myGame.board.fields, myGame.board.fieldClasses);
+  display.init(myGame.board.fields, myGame.board.fieldClasses);
   showPlayer(myGame.playerOne);
   showPlayer(myGame.playerTwo);
 

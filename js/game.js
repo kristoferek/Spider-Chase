@@ -203,12 +203,7 @@
 
       // Counter of turns
       this.turnCounter = 0;
-      this.destination = {
-        x: 0,
-        y: 0,
-        customClass: 'destination'
-      }
-
+      
       // Initialize game board
       this.board = new Board();
       this.board.init(boardSize);
