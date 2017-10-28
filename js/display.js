@@ -1,3 +1,7 @@
+var distance = function(playerA, playerB){
+  return Math.abs(playerA.x - playerB.x) + Math.abs(playerA.y - playerB.y);
+}
+
 // ---------- Display -------------------------------------------
 var Display = function () {
 
@@ -5,49 +9,88 @@ var Display = function () {
     this.destination = new Player();
     this.destination.init([gameObject.playerOne.x, gameObject.playerOne.y], 1, 0, 0, 'destination');
     this.destination.range = this.destination.calculateRange(gameObject.board);
+
     this.board = this.generateBoard(gameObject.board.fields, gameObject.board.fieldClasses);
   }
 
-  var distance = function(playerA, playerB){
-    return Math.abs(playerA.x - playerB.x) + Math.abs(playerA.y - playerB.y);
-  }
-
-  this.optionalStep = function (gameObject, player, direction) {
+  this.optionalStep = function (boardObject, player, direction) {
     switch (direction) {
       case 'top':
-      // If destination has no obstacles above
-      if (this.destination.top > 0){
-        // If destination is above player
-        if (player.y <= this.destination.y) {
-          // Destination is at the same row or above player and moving upwards will increase distance to player
-          // So if player.rangeLimit hasn't been reached
-          if (player.rangeLimit > distance(player, this.destination){
+        var newY = this.destination.y - 1;
+        // If destination has no obstacles above
+        if (this.destination.range.top > 0){
+          // If destination is at the same row or above player and moving upwards will increase distance to player
+          if (player.y >= this.destination.y) {
+            // So if player.rangeLimit hasn't been reached
+            if (player.rangeLimit > distance(player, this.destination)){
+              // Move destination upwards
+              this.destination.changePosition(boardObject, [this.destination.x, newY]);
+            }
+          // If destination is beneath player moving upwards will decrease distance to player, so no need to check distance
+          } else {
             // Move destination upwards
-            this.destination.changePosition(gameObject.board, [this.destination.x, this.destination.y--]);
+            this.destination.changePosition(boardObject, [this.destination.x, this.destination.y--]);
           }
-        }
-        // If destination is beneath player moving upwards will decrease distance, so no need to check distance
-        } else {
-          // Move destination upwards
-          this.destination.changePosition(gameObject.board, [this.destination.x, this.destination.y--]);
         }
         break;
       case 'right':
-        if (player.range.right > this.destination.x - player.x) {
-          this.destination.x++;
+        var newX = this.destination.x + 1;
+        // If destination has no obstacles on right
+        if (this.destination.range.right > 0){
+          // If destination is in the same or in the right side column from  player then moving right will increase distance to player
+          if (player.x <= this.destination.x) {
+            // So if player.rangeLimit hasn't been reached
+            if (player.rangeLimit > distance(player, this.destination)){
+              // Move destination to right
+              this.destination.changePosition(boardObject, [newX, this.destination.y]);
+            }
+          // If destination is in left side column from` player moving right will decrease distance, so no need to check distance
+          } else {
+            // Move destination upwards
+            this.destination.changePosition(boardObject, [newX, this.destination.y]);
+          }
         }
         break;
       case 'bottom':
-        if (player.range.bottom > this.destination.y - player.y) {
-          this.destination.y++;
+        var newY = this.destination.y + 1;
+        // If destination has no obstacles beneath
+        if (this.destination.range.bottom > 0){
+          // If destination is at the same row or beneath player and moving downwards will increase distance to player
+          if (player.y <= this.destination.y) {
+            // So if player.rangeLimit hasn't been reached
+            if (player.rangeLimit > distance(player, this.destination)){
+              // Move destination downwards
+              this.destination.changePosition(boardObject, [this.destination.x, newY]);
+            }
+          // If destination is above player moving downwards will decrease distance to player, so no need to check distance
+          } else {
+            // Move destination downwards
+            this.destination.changePosition(boardObject, [this.destination.x, newY]);
+          }
         }
         break;
       case 'left':
-        if (player.range.left > player.x - this.destination.x) {
-          this.destination.x--;
+        var newX = this.destination.x - 1;
+        // If destination has no obstacles on left
+        if (this.destination.range.left > 0){
+          // If destination is in the same or in the left side column from  player then moving right will increase distance to player
+          if (player.x >= this.destination.x) {
+            // So if player.rangeLimit hasn't been reached
+            if (player.rangeLimit > distance(player, this.destination)){
+              // Move destination to left
+              this.destination.changePosition(boardObject, [newX, this.destination.y]);
+            }
+          // If destination is in right side column from` player moving left will decrease distance, so no need to check distance
+          } else {
+            // Move destination upwards
+            this.destination.changePosition(boardObject, [newX, this.destination.y]);
+          }
         }
         break;
       default:
+    }
+    if (this.destination.x 1== ) {
+
     }
   }
 
@@ -121,24 +164,22 @@ var updatePlayer = function (gameObject, player, newCoordinates) {
 // ---------- Game cycle -------------------------------------------
 
 function playerOneTurn (event, gameObject, displayObject) {
-  console.log(displayObject.destination);
   switch (event.key) {
     case 'w':
-      displayObject.optionalStep(gameObject.playerOne, 'top');
+      displayObject.optionalStep(gameObject.board, gameObject.playerOne, 'top');
       break;
     case 'd':
-      displayObject.optionalStep(gameObject.playerOne, 'right');
+      displayObject.optionalStep(gameObject.board, gameObject.playerOne, 'right');
       break;
     case 's':
-      displayObject.optionalStep(gameObject.playerOne, 'bottom');
+      displayObject.optionalStep(gameObject.board, gameObject.playerOne, 'bottom');
       break;
     case 'a':
-      displayObject.optionalStep(gameObject.playerOne, 'left');
+      displayObject.optionalStep(gameObject.board, gameObject.playerOne, 'left');
       break;
     case 'Enter':
       updatePlayer(gameObject, gameObject.playerOne, [displayObject.destination.x, displayObject.destination.y]);
-      displayObject.destination.x = gameObject.playerTwo.x;
-      displayObject.destination.y = gameObject.playerTwo.y;
+      displayObject.destination.changePosition(gameObject.board,  [gameObject.playerTwo.x, gameObject.playerTwo.y]);
       return 2;
     case 'q':
       return 3;
@@ -148,24 +189,22 @@ function playerOneTurn (event, gameObject, displayObject) {
 }
 
 function playerTwoTurn (event, gameObject, displayObject) {
-  console.log(displayObject.destination);
   switch (event.key) {
     case 'ArrowUp':
-      displayObject.optionalStep(gameObject.playerTwo, 'top');
+      displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'top');
       break;
     case 'ArrowRight':
-      displayObject.optionalStep(gameObject.playerTwo, 'right');
+      displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'right');
       break;
     case 'ArrowDown':
-      displayObject.optionalStep(gameObject.playerTwo, 'bottom');
+      displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'bottom');
       break;
     case 'ArrowLeft':
-      displayObject.optionalStep(gameObject.playerTwo, 'left');
+      displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'left');
       break;
-      updatePlayer(gameObject, gameObject.playerTwo, [displayObject.destination.x, displayObject.destination.y]);
-      displayObject.destination.x = gameObject.playerOne.x;
-      displayObject.destination.y = gameObject.playerOne.y;
     case 'Enter':
+      updatePlayer(gameObject, gameObject.playerTwo, [displayObject.destination.x, displayObject.destination.y]);
+      displayObject.destination.changePosition(gameObject.board,  [gameObject.playerOne.x, gameObject.playerOne.y]);
       return 1;
     case 'q':
       return 3;
