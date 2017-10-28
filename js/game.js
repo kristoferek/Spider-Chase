@@ -116,17 +116,23 @@
       return playerRange;
     }
 
-    // Looks for obstacles and modifies previousy set range
-    this.obstaclesDistance = function (board) {
+    // Looks for obstacles from array [obstacle, obstacle ...] and modifies previousy set range
+    this.obstaclesDistance = function (board, obstacleArr) {
 
       var playerRange = this.range;
-      var obstacles = [board.fieldClasses.obstacle, board.fieldClasses.player];
+      var obstacles = obstacleArr;
 
       // Beginning from closest neighbour check field class, if it is 'unavailable' modify actual range, otherwise go to the next field in the same direction
       // Top closest obstacle in field range
       if (playerRange.top > 0){
         for (var range = 1; range <= playerRange.top; range++) {
-          if (obstacles.indexOf(board.fields[this.x][this.y - range]) >= 0){
+          // Check if string in field contains any of obstacles
+          var obstacleTop = obstacles.some(function (currentObstacle) {
+            return board.fields[this.x][this.y - range].includes(currentObstacle);
+          }, this);
+          // If there is obstacle
+          if (obstacleTop) {
+            // Set new range and stop
             playerRange.top = range - 1;
             break;
           }
@@ -135,7 +141,13 @@
       // Right closest obstacle in field range
       if (playerRange.right > 0){
         for (var range = 1; range <= playerRange.right; range++) {
-          if (obstacles.indexOf(board.fields[this.x + range][this.y]) >= 0){
+          // Check if string in field contains any of obstacles
+          var obstacleRight = obstacles.some(function (currentObstacle) {
+            return board.fields[this.x + range][this.y].includes(currentObstacle);
+          }, this);
+          // If there is obstacle
+          if (obstacleRight) {
+            // Set new range and stop
             playerRange.right = range - 1;
             break;
           }
@@ -144,7 +156,13 @@
       // Bottom closest obstacle in field range
       if (playerRange.bottom > 0){
         for (var range = 1; range <= playerRange.bottom; range++) {
-          if (obstacles.indexOf(board.fields[this.x][this.y + range]) >= 0){
+          // Check if string in field contains any of obstacles
+          var obstacleBottom = obstacles.some(function (currentObstacle) {
+            return board.fields[this.x][this.y  + range].includes(currentObstacle);
+          }, this);
+          // If there is obstacle
+          if (obstacleBottom) {
+            // Set new range and stop
             playerRange.bottom = range - 1;
             break;
           }
@@ -153,7 +171,13 @@
       // Left closest obstacle in field range
       if (playerRange.left > 0){
         for (var range = 1; range <= playerRange.left; range++) {
-          if (obstacles.indexOf(board.fields[this.x - range ][this.y]) >= 0){
+          // Check if string in field contains any of obstacles
+          var obstacleLeft = obstacles.some(function (currentObstacle) {
+            return board.fields[this.x - range][this.y].includes(currentObstacle);
+          }, this);
+          // If there is obstacle
+          if (obstacleLeft) {
+            // Set new range and stop
             playerRange.left = range - 1;
             break;
           }
@@ -164,25 +188,25 @@
     }
 
     // Calculate range for player regarding board edges and obstacles
-    this.calculateRange = function(boardObject){
+    this.calculateRange = function(boardObject, obstacles){
 
       var newRange = this.range;
       // Update range regarding board edges and given limit
       newRange = this.edgeDistance(boardObject.size);
       // Update range regarding obstacles in distance
-      newRange = this.obstaclesDistance(boardObject);
+      newRange = this.obstaclesDistance(boardObject, obstacles);
       // Update range regarding other player position
 
       return newRange;
     }
 
     // Move player to new field
-    this.changePosition = function (boardObject, [x, y]) {
+    this.changePosition = function (boardObject, [x, y], obstacles) {
       // Assign new coordinates
       this.x = x;
       this.y = y;
       // Update available movement range
-      this.range = this.calculateRange(boardObject);
+      this.range = this.calculateRange(boardObject, obstacles);
     }
 
     // // Update weapon
@@ -219,28 +243,34 @@
         this.board.fields[randXYList[i][0]][randXYList[i][1]] = this.board.fieldClasses.obstacle;
       }
 
-      // Set class value for player fields
-      this.board.fields[randXYList[0][0]][randXYList[0][1]] = this.board.fieldClasses.player;
-      this.board.fields[randXYList[1][0]][randXYList[1][1]] = this.board.fieldClasses.player;
       // Initialize player one
       this.playerOne = new Player();
       this.playerOne.init(randXYList[0], rangeLimit, initialPower, defaultWeapon, 'playerOne');
-      this.playerOne.range = this.playerOne.calculateRange(this.board);
+      this.playerOne.range = this.playerOne.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
+      // Set class value for player fields as content
+      this.board.fields[randXYList[0][0]][randXYList[0][1]] = this.playerOne.customClass;
 
       // Initialize player two
       this.playerTwo = new Player();
       this.playerTwo.init(randXYList[1], rangeLimit, initialPower, defaultWeapon, 'playerTwo');
-      this.playerTwo.range = this.playerTwo.calculateRange(this.board);
+      this.playerTwo.range = this.playerTwo.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
+      // Set class value for player fields as content
+      this.board.fields[randXYList[1][0]][randXYList[1][1]] = this.playerTwo.customClass;
+
 
       // Initialize game state
       this.state = 0;
     }
 
     // Update board fields with player class on position change
-    this.movePlayer = function (player, newCoordinates) {
+    this.movePlayer = function (player, newCoordinates, obstacles) {
+      // Empty actual player field on board
       this.board.fields[player.x][player.y] = this.board.fieldClasses.empty;
-      player.changePosition(this.board, newCoordinates);
-      this.board.fields[player.x][player.y] = this.board.fieldClasses.player;
+      // Update player position and range
+      player.changePosition(this.board, newCoordinates, obstacles);
+      // Mark new player field on board
+      this.board.fields[player.x][player.y] = player.customClass;
+      // Update turn counter
       this.turnCounter++;
     }
 
@@ -265,4 +295,8 @@
     return (number > 1)
       ? Math.floor(Math.random() * Number(number))
       : 0;
+  }
+
+  var distance = function(x1, y1, x2, y2){
+    return Math.abs(x1 - x2) + Math.abs(y1 - y2);
   }

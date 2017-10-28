@@ -1,16 +1,22 @@
-var distance = function(playerA, playerB){
-  return Math.abs(playerA.x - playerB.x) + Math.abs(playerA.y - playerB.y);
-}
-
 // ---------- Display -------------------------------------------
 var Display = function () {
 
   this.init = function(gameObject){
     this.destination = new Player();
-    this.destination.init([gameObject.playerOne.x, gameObject.playerOne.y], 1, 0, 0, 'destination');
-    this.destination.range = this.destination.calculateRange(gameObject.board);
 
+    // Sets the origin player for destination object
+    this.destination.originPlayer = gameObject.playerOne;
+    this.destination.obstaclePlayer = gameObject.playerTwo;
+
+    // Initialize destinantion Player object
+    this.destination.init([this.destination.originPlayer.x, this.destination.originPlayer.y], 1, 0, 0, 'destination');
+
+    // Calculate destinantion range from board, edges, obstacles and oposite player
+    this.destination.range = this.destination.calculateRange(gameObject.board, [gameObject.board.fieldClasses.obstacle, this.destination.obstaclePlayer.customClass]);
+
+    // Create HTML board and display in html
     this.board = this.generateBoard(gameObject.board.fields, gameObject.board.fieldClasses);
+
   }
 
   this.optionalStep = function (boardObject, player, direction) {
@@ -22,14 +28,14 @@ var Display = function () {
           // If destination is at the same row or above player and moving upwards will increase distance to player
           if (player.y >= this.destination.y) {
             // So if player.rangeLimit hasn't been reached
-            if (player.rangeLimit > distance(player, this.destination)){
+            if (player.rangeLimit > distance(player.x, player.y, this.destination.x, this.destination.y)){
               // Move destination upwards
-              this.destination.changePosition(boardObject, [this.destination.x, newY]);
+              updateDestination(boardObject, this.destination, [this.destination.x, newY]);
             }
           // If destination is beneath player moving upwards will decrease distance to player, so no need to check distance
           } else {
             // Move destination upwards
-            this.destination.changePosition(boardObject, [this.destination.x, this.destination.y--]);
+            updateDestination(boardObject, this.destination, [this.destination.x, newY]);
           }
         }
         break;
@@ -40,14 +46,14 @@ var Display = function () {
           // If destination is in the same or in the right side column from  player then moving right will increase distance to player
           if (player.x <= this.destination.x) {
             // So if player.rangeLimit hasn't been reached
-            if (player.rangeLimit > distance(player, this.destination)){
+            if (player.rangeLimit > distance(player.x, player.y, this.destination.x, this.destination.y)){
               // Move destination to right
-              this.destination.changePosition(boardObject, [newX, this.destination.y]);
+              updateDestination(boardObject, this.destination, [newX, this.destination.y]);
             }
           // If destination is in left side column from` player moving right will decrease distance, so no need to check distance
           } else {
             // Move destination upwards
-            this.destination.changePosition(boardObject, [newX, this.destination.y]);
+            updateDestination(boardObject, this.destination, [newX, this.destination.y]);
           }
         }
         break;
@@ -58,14 +64,14 @@ var Display = function () {
           // If destination is at the same row or beneath player and moving downwards will increase distance to player
           if (player.y <= this.destination.y) {
             // So if player.rangeLimit hasn't been reached
-            if (player.rangeLimit > distance(player, this.destination)){
+            if (player.rangeLimit > distance(player.x, player.y, this.destination.x, this.destination.y)){
               // Move destination downwards
-              this.destination.changePosition(boardObject, [this.destination.x, newY]);
+              updateDestination(boardObject, this.destination, [this.destination.x, newY]);
             }
           // If destination is above player moving downwards will decrease distance to player, so no need to check distance
           } else {
             // Move destination downwards
-            this.destination.changePosition(boardObject, [this.destination.x, newY]);
+            updateDestination(boardObject, this.destination, [this.destination.x, newY]);
           }
         }
         break;
@@ -76,21 +82,18 @@ var Display = function () {
           // If destination is in the same or in the left side column from  player then moving right will increase distance to player
           if (player.x >= this.destination.x) {
             // So if player.rangeLimit hasn't been reached
-            if (player.rangeLimit > distance(player, this.destination)){
+            if (player.rangeLimit > distance(player.x, player.y, this.destination.x, this.destination.y)){
               // Move destination to left
-              this.destination.changePosition(boardObject, [newX, this.destination.y]);
+            updateDestination(boardObject, this.destination, [newX, this.destination.y]);
             }
           // If destination is in right side column from` player moving left will decrease distance, so no need to check distance
           } else {
             // Move destination upwards
-            this.destination.changePosition(boardObject, [newX, this.destination.y]);
+            updateDestination(boardObject, this.destination, [newX, this.destination.y]);
           }
         }
         break;
       default:
-    }
-    if (this.destination.x 1== ) {
-
     }
   }
 
@@ -108,7 +111,7 @@ var Display = function () {
         // Create dive with class, id with field index number in name and sample content
         var field = $('<div>').addClass('field ' + fieldsArr[x][y]);
         field.attr('id', "field-" +  x + y);
-        field.text(x + ', ' + y);
+        field.append($('<div>').addClass('background').append($('<div>').addClass('object')));
         // Add it to the row
         row.append(field);
       }
@@ -130,21 +133,26 @@ var removeClassName = function ([x, y], customClass) {
 }
 
 // Find div with id with player coordinates and add 'range' class for available fields in range
-var showPlayerRange = function (player, boardObject) {
-  for (var x = player.x - player.range.left; x <= player.x + player.range.right; x++) {
-    for (var y = player.y - player.range.top; y <= player.y + player.range.bottom; y++) {
-      var field = $('#field-'.concat(player.x, player.y));
-      if (!((x === player.x && y === player.y) || field.hasClass(boardObject.fieldClasses.obstacle) || field.hasClass(boardObject.fieldClasses.player))) {
-        field.addClass('range');
+var showPlayerRange = function (player, gameObject) {
+  for (var x = player.x - player.rangeLimit; x <= player.x + player.rangeLimit; x++) {
+    for (var y = player.y - player.rangeLimit; y <= player.y + player.rangeLimit; y++) {
+      if ((x => 0) && (y => 0)){
+        var field = $('#field-'.concat(x, y));
+        if (distance(player.x, player.y, x, y) <= player.rangeLimit) {
+          if (!(field.hasClass(gameObject.board.fieldClasses.obstacle) || field.hasClass(gameObject.playerOne.customClass) || field.hasClass(gameObject.playerTwo.customClass))) {
+            field.addClass('range');
+          }
+        }
       }
     }
   }
 }
 
 var hidePlayerRange = function (player, boardObject) {
-  for (var x = player.x - player.range.left; x <= player.x + player.range.right; x++) {
-    for (var y = player.y - player.range.top; y <= player.y + player.range.bottom; y++) {
-      if (!((x === player.x && y === player.y) || field.hasClass(boardObject.fieldClasses.obstacle) || field.hasClass(boardObject.fieldClasses.player))) {
+  for (var x = player.x - player.rangeLimit; x <= player.x + player.rangeLimit; x++) {
+    for (var y = player.y - player.rangeLimit; y <= player.y + player.rangeLimit; y++) {
+      if ((x => 0) && (y => 0)){
+        var field = $('#field-'.concat(x, y));
         field.removeClass('range');
       }
     }
@@ -156,9 +164,27 @@ var updatePlayer = function (gameObject, player, newCoordinates) {
   // Make player dispaear from board
   removeClassName([player.x, player.y], player.customClass);
   // Update position and movement range
-  gameObject.movePlayer(player, newCoordinates);
+  gameObject.movePlayer(player, newCoordinates, [gameObject.board.fieldClasses.obstacle, gameObject.board.fieldClasses.player]);
   // Make player appear on board
   addClassName([player.x, player.y], player.customClass);
+}
+
+// Update destination position
+var updateDestination = function (boardObject, destination, [x, y], playerOne, playerTwo) {
+  // If player defined change destination originPlayer
+  if (playerOne && playerTwo) {
+    destination.originPlayer = playerOne;
+    destination.obstaclePlayer = playerTwo;
+  }
+  // Make destination dispaear from board
+  removeClassName([destination.x, destination.y], destination.customClass);
+  // Update destination position and movement range to obstacles including opposite player
+  destination.changePosition(boardObject, [x, y], [boardObject.fieldClasses.obstacle, destination.obstaclePlayer.customClass]);
+  // If there is no player on field
+  if (boardObject.fields[x][y].includes(boardObject.fieldClasses.player) === false){
+    // Make destination appear on board
+    addClassName([destination.x, destination.y], destination.customClass);
+  }
 }
 
 // ---------- Game cycle -------------------------------------------
@@ -178,8 +204,9 @@ function playerOneTurn (event, gameObject, displayObject) {
       displayObject.optionalStep(gameObject.board, gameObject.playerOne, 'left');
       break;
     case 'Enter':
+      hidePlayerRange(gameObject.playerOne, gameObject)
       updatePlayer(gameObject, gameObject.playerOne, [displayObject.destination.x, displayObject.destination.y]);
-      displayObject.destination.changePosition(gameObject.board,  [gameObject.playerTwo.x, gameObject.playerTwo.y]);
+      updateDestination(gameObject.board, displayObject.destination, [gameObject.playerTwo.x, gameObject.playerTwo.y], gameObject.playerTwo, gameObject.playerOne);
       return 2;
     case 'q':
       return 3;
@@ -203,8 +230,9 @@ function playerTwoTurn (event, gameObject, displayObject) {
       displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'left');
       break;
     case 'Enter':
+      hidePlayerRange(gameObject.playerTwo, gameObject)
       updatePlayer(gameObject, gameObject.playerTwo, [displayObject.destination.x, displayObject.destination.y]);
-      displayObject.destination.changePosition(gameObject.board,  [gameObject.playerOne.x, gameObject.playerOne.y]);
+      updateDestination(gameObject.board, displayObject.destination, [gameObject.playerOne.x, gameObject.playerOne.y], gameObject.playerOne, gameObject.playerTwo);
       return 1;
     case 'q':
       return 3;
