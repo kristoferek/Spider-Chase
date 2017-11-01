@@ -258,13 +258,15 @@
     this.init = function(player){
       // Origin player
       this.origin = player;
-      // Current step
+      // Current distance
       this.distance = 0;
       // Max number of steps
-      this.stepLimit = player.rangeLimit;
+      this.stepLimit = player.rangeLimit + 1;
       // Board coordinates
-      this.x = player.x;
-      this.y = player.y;
+      this.x = this.origin.x;
+      this.y = this.origin.y;
+      // List of following moves
+      this.path = [[this.x, this.y]];
     }
 
     // Check if next step is possible for origin player
@@ -273,14 +275,26 @@
     }
 
     this.updatePosition = function(coordinates){
-      this.x = coordinates[0];
-      this.y = coordinates[1];
-      var newDistance = distance(this.origin.x, this.origin.y, this.x, this.y);
-      if (newDistance < this.distance) {
-        this.distance--;
-      } else if (newDistance > this.distance) {
-        this.distance++;
+      var inPathIndex = getCoordinatesIndex(coordinates, this.path);
+      // if coordinates is not in the path
+      if (inPathIndex < 0) {
+        // if number of steps is lower than stepLimit
+        if (this.path.length < this.stepLimit){
+          // add coordinates it to the path
+          this.path.push(coordinates);
+          // update nextStep
+          this.x = coordinates[0];
+          this.y = coordinates[1];
+          this.distance = distance(this.x, this.y, this.origin.x, this.origin.y);
+        }
+      // if is in path, slice path to new this coordinates
+      } else if (inPathIndex => 0) {
+        this.path = this.path.slice(0, inPathIndex + 1);
+        this.x = coordinates[0];
+        this.y = coordinates[1];
+        this.distance = distance(this.x, this.y, this.origin.x, this.origin.y);
       }
+      console.log('Path: ', this.path, inPathIndex);
     }
 
     this.updateOrigin = function(player){
@@ -288,6 +302,7 @@
       this.distance = 0;
       this.x = this.origin.x;
       this.y = this.origin.y;
+      this.path = [[this.x, this.y]];
     }
   }
 
@@ -415,4 +430,21 @@
       }
     );
     return existsInArr;
+  }
+
+  // Check if coordinates exists in array
+  function getCoordinatesIndex([x, y], array){
+    var ind = -1;
+    array.some(
+      function(element, index){
+        if (element[0] === x){
+          if (element[1] === y){
+            ind = index;
+            return true;
+          }
+        }
+        return false;
+      }
+    );
+    return ind;
   }

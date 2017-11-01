@@ -8,7 +8,8 @@ var Display = function () {
       nextStep: 'step',
       obstacle: 'obstacle',
       wepon: 'weapon',
-      range: 'range'
+      range: 'range',
+      path: 'path'
     }
     this.destination = new Player();
 
@@ -187,15 +188,27 @@ var Display = function () {
 
   // Display next possible step
   this.showNextPossibleStep = function (coordinates) {
+    // If new ccordinates are possible to move to
     if (this.nextStep.isPossible(coordinates)) {
       // hide actual possible step
       removeClassName([this.nextStep.x, this.nextStep.y], this.classNames.nextStep);
+
+      // hide path
+      var pathClass = this.classNames.path;
+      console.log(pathClass);
+      this.nextStep.path.forEach(function(pathElement){
+        removeClassName([pathElement[0], pathElement[1]], pathClass);
+      });
+
       // update possible step position
       this.nextStep.updatePosition(coordinates);
+
+      // show path
+      this.nextStep.path.forEach(function(pathElement){
+        addClassName([pathElement[0], pathElement[1]], pathClass);
+      });
       // show updated possible step
-      // if (this.nextStep.origin.x !== this.nextStep.x && this.nextStep.origin.y === this.nextStep.y) {
-        addClassName(coordinates, this.classNames.nextStep);
-      // }
+      addClassName([this.nextStep.x, this.nextStep.y], this.classNames.nextStep);
     }
   }
 }
@@ -322,7 +335,7 @@ function playerTwoTurn (event, gameObject, displayObject) {
 }
 
 function playerTurn (event, gameObject, player, displayObject) {
-  console.log('actual nextStep', displayObject.nextStep);
+  // console.log('actual nextStep', displayObject.nextStep);
   switch (event.key) {
     case 'ArrowUp':
       displayObject.showNextPossibleStep([displayObject.nextStep.x, displayObject.nextStep.y - 1]);
