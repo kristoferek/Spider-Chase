@@ -2,6 +2,14 @@
 var Display = function () {
 
   this.init = function(gameObject){
+    this.classNames = {
+      playerOne: gameObject.playerOne.customClass,
+      playerTwo: gameObject.playerTwo.customClass,
+      nextStep: 'step',
+      obstacle: 'obstacle',
+      wepon: 'weapon',
+      range: 'range'
+    }
     this.destination = new Player();
 
     // Sets the origin player for destination object
@@ -14,9 +22,18 @@ var Display = function () {
     // Calculate destinantion range from board, edges, obstacles and oposite player
     this.destination.range = this.destination.calculateRange(gameObject.board, [gameObject.board.fieldClasses.obstacle, this.destination.obstaclePlayer.customClass]);
 
-    // Create HTML board and display in html
-    this.board = this.generateBoard(gameObject.board.fields, gameObject.board.fieldClasses);
+    // Create next step object for player One
+    this.nextStep = new NextStep();
+    this.nextStep.init(gameObject.playerOne);
 
+    // Create HTML board and display on page
+    this.board = this.generateBoard(gameObject.board.fields, gameObject.obstacles);
+    // Display board
+    this.showBoard(this.board);
+    // Display players
+    this.showPlayer(gameObject.playerOne);
+    this.showPlayerRange(gameObject.playerOne);
+    this.showPlayer(gameObject.playerTwo);
   }
 
   this.optionalStep = function (boardObject, player, direction) {
@@ -97,10 +114,10 @@ var Display = function () {
     }
   }
 
-  this.generateBoard = function (fieldsArr, classArr){
+  // Generate game board
+  this.generateBoard = function (fieldsArr, obstacles){
 
-    // Find #board element
-    var boardHTML = $('#board');
+    var boardHTML = $('<div>');
 
     // For every board row
     for (var y = 0; y < fieldsArr.length; y++) {
@@ -108,8 +125,9 @@ var Display = function () {
       var row = $('<div>').addClass('row');
       // For every field in a row
       for (var x = 0; x < fieldsArr.length; x++) {
+
         // Create dive with class, id with field index number in name and sample content
-        var field = $('<div>').addClass('field ' + fieldsArr[x][y]);
+        var field = $('<div>').addClass((isInArray([x, y], obstacles) ? 'field ' + this.classNames.obstacle : 'field'));
         field.attr('id', "field-" +  x + y);
         field.append($('<div>').addClass('background').append($('<div>').addClass('object')));
         // Add it to the row
@@ -120,16 +138,78 @@ var Display = function () {
     }
     return boardHTML;
   }
+
+  // Display board
+  this.showBoard = function(elementHTML){
+    // Find #board element
+    var boardHTML = $('#board');
+    boardHTML.html('');
+    boardHTML.append(elementHTML);
+  }
+
+  // Get player class
+  this.getPlayerClass = function (player){
+
+  }
+  // Display player
+  this.showPlayer = function(player) {
+    addClassName([player.x, player.y], player.customClass);
+  }
+
+  // Hide player
+  this.hidePlayer = function(player) {
+    removeClassName([player.x, player.y], player.customClass);
+  }
+
+  // Display player possible move range
+  this.showPlayerRange = function (player) {
+    // For all coordinates in player plossibleMoves array
+    for (var i = 0; i < player.possibleMoves.length; i++) {
+      // Find element with id #field-xy
+      var field = $('#field-'.concat(player.possibleMoves[i][0], player.possibleMoves[i][1]));
+      // Add 'range' class except player one or two field
+      if (!(field.hasClass(this.classNames.playerOne) || field.hasClass(this.classNames.playerTwo))) {
+        field.hasClass(this.classNames.range) ? null : field.addClass(this.classNames.range);
+      }
+    }
+  }
+
+  // Hide player possible move range
+  this.hidePlayerRange = function (player) {
+    // For all coordinates in player plossibleMoves array
+    for (var i = 0; i < player.possibleMoves.length; i++) {
+      // Find element with id #field-xy
+      var field = $('#field-'.concat(player.possibleMoves[i][0], player.possibleMoves[i][1]));
+      // Remove 'range' class except player one or two field
+      field.hasClass(this.classNames.range) ?  field.removeClass(this.classNames.range) : null;
+    }
+  }
+
+  // Display next possible step
+  this.showNextPossibleStep = function (coordinates) {
+    if (this.nextStep.isPossible(coordinates)) {
+      // hide actual possible step
+      removeClassName([this.nextStep.x, this.nextStep.y], this.classNames.nextStep);
+      // update possible step position
+      this.nextStep.updatePosition(coordinates);
+      // show updated possible step
+      // if (this.nextStep.origin.x !== this.nextStep.x && this.nextStep.origin.y === this.nextStep.y) {
+        addClassName(coordinates, this.classNames.nextStep);
+      // }
+    }
+  }
 }
 
-// Find div with id with player coordinates and add player class
+// Find div with id and coordinates and add custom class
 var addClassName = function ([x, y], customClass) {
-  $('#field-'.concat(x, y)).addClass(customClass);
+  var element = $('#field-'.concat(x, y));
+  element.hasClass(customClass) ? null : element.addClass(customClass);
 }
 
-// Find div with id with player coordinates and remove player class
+// Find div with id and coordinates and remove custom class
 var removeClassName = function ([x, y], customClass) {
-  $('#field-'.concat(x, y)).removeClass(customClass);
+  var element = $('#field-'.concat(x, y));
+  element.hasClass(customClass) ? element.removeClass(customClass) : null;
 }
 
 // Find div with id with player coordinates and add 'range' class for available fields in range
@@ -230,7 +310,7 @@ function playerTwoTurn (event, gameObject, displayObject) {
       displayObject.optionalStep(gameObject.board, gameObject.playerTwo, 'left');
       break;
     case 'Enter':
-      hidePlayerRange(gameObject.playerTwo, gameObject)
+      hidePlayerRange(gameObject.playerTwo, gameObject);
       updatePlayer(gameObject, gameObject.playerTwo, [displayObject.destination.x, displayObject.destination.y]);
       updateDestination(gameObject.board, displayObject.destination, [gameObject.playerOne.x, gameObject.playerOne.y], gameObject.playerOne, gameObject.playerTwo);
       return 1;
@@ -239,4 +319,48 @@ function playerTwoTurn (event, gameObject, displayObject) {
     default:
   }
   return 2
+}
+
+function playerTurn (event, gameObject, player, displayObject) {
+  console.log('actual nextStep', displayObject.nextStep);
+  switch (event.key) {
+    case 'ArrowUp':
+      displayObject.showNextPossibleStep([displayObject.nextStep.x, displayObject.nextStep.y - 1]);
+      break;
+    case 'ArrowRight':
+      displayObject.showNextPossibleStep([displayObject.nextStep.x + 1, displayObject.nextStep.y]);
+      break;
+    case 'ArrowDown':
+      displayObject.showNextPossibleStep([displayObject.nextStep.x, displayObject.nextStep.y + 1]);
+      break;
+    case 'ArrowLeft':
+      displayObject.showNextPossibleStep([displayObject.nextStep.x - 1, displayObject.nextStep.y]);
+      break;
+    case 'Enter':
+      // hide actual player range and position
+      displayObject.hidePlayerRange(player);
+      displayObject.hidePlayer(player)
+
+      // set obstacles including opponent class
+      var obstacles = [
+        gameObject.obstacles.concat([[gameObject.getOpponent(player.x, gameObject.getOpponent(player).y)]]),
+      ];
+
+      // Update player position and possibleMoves array
+      gameObject.actionMove(player, [displayObject.nextStep.x, displayObject.nextStep.y], obstacles);
+
+      // Reset nextStep and change its origin to opponent player
+      displayObject.nextStep.updateOrigin(gameObject.getOpponent(player));
+
+      // Show updated player in new position
+      displayObject.showPlayer(player);
+
+      // Display opponent player range
+      displayObject.showPlayerRange(gameObject.getOpponent(player));
+      return (gameObject.state === 1) ? 2 : 1;
+    case 'q':
+      return 3;
+    default:
+  }
+  return gameObject.state;
 }

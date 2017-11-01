@@ -23,7 +23,6 @@
       obstacle: 'unavailable',
       player: 'player',
       weapon: 'weapon'
-
     };
 
     this.init = function (size) {
@@ -36,6 +35,10 @@
         }
         this.fields.push(column);
       }
+    }
+
+    this.setField = function([x,y], className){
+      this.fields[x][y] = className;
     }
 
     // Generates list of random field indexes [[x, y],[x, y],[x, y]]
@@ -83,17 +86,20 @@
   }
 
 // ---------- Player object -------------------------------------------
-  // fieldIndex [x, y];
-  // range limit;
-  // range,
-  // power;
-  // weapon;
+  // coordinates:
+  // x, y
+  // range limit - integer;
+  // possibleMoves - array of coordinates;
+  // range - object,
+  // power - integer;
+  // weapon - object;
 
   var Player = function () {
     this.init = function (coordinates, rangeLimit, power, weapon, customClass) {
       this.x = coordinates[0];
       this.y = coordinates[1];
       this.rangeLimit = rangeLimit;
+      this.possibleMoves = [];
       this.range = new Range(rangeLimit, rangeLimit, rangeLimit, rangeLimit);
       this.power = power;
       this.weapon = weapon;
@@ -209,15 +215,80 @@
       this.range = this.calculateRange(boardObject, obstacles);
     }
 
-    // // Update weapon
-    // this.updateWeapon = function (weapon) {
-    //   return (weapon > this.weapon) ? weapon : this.weapon;
-    // }
-    //
-    // // Decrease power
-    // this.decreasePower = function (power) {
-    //   return (power > this.power) ? 0 : this.power - power;
-    // }
+    // Update player range and stores it in array of possible moves
+    this.updatePossibleMoves = function(fieldsArr, obstacles) {
+      // Set max player range coordinates for given board (fieldArr)
+      var topLeft = {
+        x: Math.min(Math.abs(this.x - this.rangeLimit), 0),
+        y: Math.min(Math.abs(this.y - this.rangeLimit), 0)
+      }
+      var bottomRight = {
+        x: Math.min(this.x + this.rangeLimit, fieldsArr.length - 1),
+        y: Math.min(this.y + this.rangeLimit, fieldsArr[0].length - 1)
+      }
+
+      var arr = [];
+
+      // Generate range array of coordinates
+      for (var x = topLeft.x; x <= bottomRight.x; x++) {
+        for (var y = topLeft.y; y <= bottomRight.y; y++) {
+          // if distance is lower than range limit
+          if (distance(this.x, this.y, x, y) <= this.rangeLimit) {
+            // If field contains no obstacles add its coordinates to array
+            (isInArray([x, y], obstacles)) ? null :  arr.push([x, y]);
+          }
+        }
+      }
+      this.possibleMoves = arr;
+    }
+
+    // Update position
+    this.updatePosition = function (fieldArr, [x, y]) {
+      this.x = x;
+      this.y = y;
+    }
+
+    this.positonIsPossible = function(coordinates){
+      return isInArray([coordinates[0], coordinates[1]], this.possibleMoves);
+    }
+  }
+
+// ----------  Next step -------------------------------------------//
+  var NextStep = function(){
+    this.init = function(player){
+      // Origin player
+      this.origin = player;
+      // Current step
+      this.distance = 0;
+      // Max number of steps
+      this.stepLimit = player.rangeLimit;
+      // Board coordinates
+      this.x = player.x;
+      this.y = player.y;
+    }
+
+    // Check if next step is possible for origin player
+    this.isPossible = function (coordinates) {
+      return isInArray(coordinates, this.origin.possibleMoves);
+    }
+
+    this.updatePosition = function(coordinates){
+      this.x = coordinates[0];
+      this.y = coordinates[1];
+      var newDistance = distance(this.origin.x, this.origin.y, this.x, this.y);
+      if (newDistance < this.distance) {
+        this.distance--;
+      } else if (newDistance > this.distance) {
+        this.distance++;
+      }
+    }
+
+    this.updateOrigin = function(player){
+      this.origin = player;
+      this.distance = 0;
+      this.x = this.origin.x;
+      this.y = this.origin.y;
+    }
   }
 
 // ---------- Game object -------------------------------------------
@@ -238,28 +309,43 @@
       // - randXYList[...rest] - for obstacles
       var randXYList = this.board.randomFieldList(20);
 
+      this.obstacles = randXYList.slice(2).sort();
+
       // Set content type for every field with obstacles
-      for (var i = 2; i < randXYList.length; i++) {
-        this.board.fields[randXYList[i][0]][randXYList[i][1]] = this.board.fieldClasses.obstacle;
-      }
+      // for (var i = 2; i < randXYList.length; i++) {
+      //   this.board.fields[randXYList[i][0]][randXYList[i][1]] = this.board.fieldClasses.obstacle;
+      // }
 
       // Initialize player one
       this.playerOne = new Player();
       this.playerOne.init(randXYList[0], rangeLimit, initialPower, defaultWeapon, 'playerOne');
-      this.playerOne.range = this.playerOne.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
+      // this.playerOne.range = this.playerOne.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
       // Set class value for player fields as content
-      this.board.fields[randXYList[0][0]][randXYList[0][1]] = this.playerOne.customClass;
+      // this.board.fields[randXYList[0][0]][randXYList[0][1]] = this.playerOne.customClass;
 
       // Initialize player two
       this.playerTwo = new Player();
       this.playerTwo.init(randXYList[1], rangeLimit, initialPower, defaultWeapon, 'playerTwo');
-      this.playerTwo.range = this.playerTwo.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
+      // this.playerTwo.range = this.playerTwo.calculateRange(this.board, [this.board.fieldClasses.obstacle, this.board.fieldClasses.player]);
       // Set class value for player fields as content
-      this.board.fields[randXYList[1][0]][randXYList[1][1]] = this.playerTwo.customClass;
+      // this.board.fields[randXYList[1][0]][randXYList[1][1]] = this.playerTwo.customClass;
 
+      // Update possible moves array for player One
+      this.playerOne.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerTwo.x, this.playerTwo.y]]));
+
+      // Update possible moves array for player Two
+      this.playerTwo.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerOne.x, this.playerOne.y]]));
+
+      // Set current player
+      this.currentPlayer = this.playerOne;
 
       // Initialize game state
       this.state = 0;
+    }
+
+    // Get opponent
+    this.getOpponent = function (player) {
+      return (player === this.playerOne) ? this.playerTwo : this.playerOne;
     }
 
     // Update board fields with player class on position change
@@ -270,6 +356,21 @@
       player.changePosition(this.board, newCoordinates, obstacles);
       // Mark new player field on board
       this.board.fields[player.x][player.y] = player.customClass;
+      // Update turn counter
+      this.turnCounter++;
+    }
+
+    // Update player position as well as previous and actual board fields content and turn counter
+    this.actionMove = function (player, newCoordinates) {
+      // Empty previous player board field
+      // this.board.setField([player.x, player.y], this.board.fieldClasses.empty);
+      // Update player position and range
+      player.updatePosition(this.board.fields, newCoordinates);
+      this.playerOne.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerTwo.x, this.playerTwo.y]]));
+
+      this.playerTwo.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerOne.x, this.playerOne.y]]));
+      // Fill actual player field with player class
+      // this.board.setField([player.x, player.y], player.customClass);
       // Update turn counter
       this.turnCounter++;
     }
@@ -297,6 +398,21 @@
       : 0;
   }
 
-  var distance = function(x1, y1, x2, y2){
+  function distance(x1, y1, x2, y2){
     return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+  }
+
+  // Check if coordinates exists in array
+  function isInArray([x, y], array){
+    var existsInArr = array.some(
+      function(element){
+        if (element[0] === x){
+          if (element[1] === y){
+            return true;
+          }
+        }
+        return false;
+      }
+    );
+    return existsInArr;
   }

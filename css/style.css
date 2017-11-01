@@ -38,14 +38,6 @@
   background-color: rgba(255, 0, 237, 0.29);
 }
 
-.playerOne .background{
-  background-color: red;
-}
-
-.playerTwo .background{
-  background-color: green;
-}
-
 .playerOne .background, .playerTwo .background{
   border-radius: 50%;
   height: calc(100% - 6px);
@@ -53,7 +45,7 @@
   border: 3px solid lightgrey;
 }
 
-.unavailable .background{
+.obstacle .background{
   background-color: rgba(30, 9, 18, 0.49);
 }
 
@@ -61,6 +53,12 @@
     background-color: rgba(205, 166, 168, 0.34);
 }
 
-.destination .background{
+.step .background, .destination .background{
   background-color: rgba(205, 166, 168, 0.74);
+}
+.playerOne .background{
+  background-color: red;
+}
+.playerTwo .background{
+  background-color: green;
 }
