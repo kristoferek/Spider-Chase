@@ -4,13 +4,68 @@
   width: 100%;
 }
 
+#board, #informations{
+    width: auto;
+    margin: 10px auto;
+    position: relative;
+}
+
 #board{
-  width: auto;
-  margin: 20px auto;
   min-width: 100px;
   max-width: 600px;
   max-height: 600px;
   background-color: black
+}
+
+#informations{
+  width: 600px;
+}
+
+#informations .player, #informations .turn{
+  display: inline-block;
+  text-align: center;
+}
+
+#informations .player{
+  width: 45%;
+}
+
+#informations .player:first-of-type.active{
+  background-color: rgba(244, 7, 7, 0.57);
+}
+
+#informations .player:last-of-type.active{
+  background-color: rgba(7, 244, 31, 0.57);
+}
+
+#informations .turn{
+  width: 10%;
+}
+
+#informations .power, #informations .weapon{
+  display: inline-block;
+  padding: 3px 5px;
+}
+
+.modal{
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  background: rgba(255, 255, 255, 0.8);
+  left: 10%;
+  top: 10%;
+  /*display: flex;*/
+  /*align-content: space-between;*/
+  /*justify-content: center;*/
+  text-align: center;
+}
+
+.modal button{
+  height: 30px;
+}
+
+.modal div, .modal h1{
+  padding: 1em 0 0.2em 0;
 }
 
 .row{
