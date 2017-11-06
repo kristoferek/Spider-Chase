@@ -1,3 +1,4 @@
+/* eslint semi: ["error", "always"] */
 // ---------- Board object -------------------------------------------
 
 // Board is a square of defined size
@@ -10,23 +11,17 @@
 // fields[x][y][fieldClasses index]
 // sample fields = [[fi, fi, fi], [fi, fi, fi], [fi, fi, fi]]]
 
-// Different types of content:
-//   [
-//      0 - empty
-//      1 - unavailable
-//      2 - weapon
-//   ]
-// }
   var Board = function () {
+    // Board filed content types
     this.fieldClasses = {
       empty: 'available',
       obstacle: 'unavailable',
       player: 'player',
       weapon: 'weapon'
     };
-
+    // Constructor
     this.init = function (size) {
-      this.size = size;
+      this.size = size || 10;
       this.fields = [];
       for (var x = 0; x < this.size; x++) {
         var column = [];
@@ -35,28 +30,23 @@
         }
         this.fields.push(column);
       }
-    }
-
-    this.setField = function([x,y], className){
-      this.fields[x][y] = className;
-    }
+    };
 
     // Generates list of random field indexes [[x, y],[x, y],[x, y]]
     this.randomFieldList = function (quantity) {
-      var maxQuantity = this.size * this.size /4;
+      var maxQuantity = this.size * this.size / 4;
 
       // Proceed if quantity is lower then allowed max (density)
       if (quantity < maxQuantity && quantity >= 1) {
         var randomXYArr = [[getRandomNumber(this.size), getRandomNumber(this.size)]];
+
         // If requested quantity is more then one generate unique indexes
-        if (quantity > 1){
+        if (quantity > 1) {
           var i = 1;
-          while (i < quantity){
+          while (i < quantity) {
             var newRandomIndex = [getRandomNumber(this.size), getRandomNumber(this.size)];
-            var isUnique = !randomXYArr.some(function(indexXY){
-              return indexXY[0] === newRandomIndex[0] && indexXY[1] === newRandomIndex[1]
-            });
-            if (isUnique){
+            // if new coordinates are unique add them to randomXYArr
+            if (!isInArray(newRandomIndex, randomXYArr)) {
               randomXYArr.push(newRandomIndex);
               i++;
             }
@@ -66,11 +56,11 @@
 
       // if requested quantity is to large
       } else {
-        console.log(Error("Quantity of random indexes: " + quantity + " is greater then max: " + maxQuantity));
+        console.log(Error('Quantity of random indexes: " + quantity + " is greater then max: ' + maxQuantity));
         return [];
       }
-    }
-  }
+    };
+  };
 
 // ---------- Player object -------------------------------------------
   // coordinates:
@@ -82,29 +72,29 @@
   // weapon - object;
 
   var Player = function () {
+    // Constructor
     this.init = function (coordinates, rangeLimit, power, weapon, customClass) {
       this.x = coordinates[0];
       this.y = coordinates[1];
-      this.rangeLimit = rangeLimit;
+      this.rangeLimit = rangeLimit || 3;
       this.possibleMoves = [];
-      this.range = new Range(rangeLimit, rangeLimit, rangeLimit, rangeLimit);
-      this.power = power;
-      this.weapon = weapon;
+      this.power = power || 100;
+      this.weapon = weapon || 0;
       this.customClass = customClass;
       this.defend = false;
-    }
+    };
 
     // Update player range and stores it in array of possible moves
-    this.updatePossibleMoves = function(fieldsArr, obstacles) {
+    this.updatePossibleMoves = function (fieldsArr, obstacles) {
       // Set max player range coordinates for given board (fieldArr)
       var topLeft = {
         x: Math.min(Math.abs(this.x - this.rangeLimit), 0),
         y: Math.min(Math.abs(this.y - this.rangeLimit), 0)
-      }
+      };
       var bottomRight = {
         x: Math.min(this.x + this.rangeLimit, fieldsArr.length - 1),
         y: Math.min(this.y + this.rangeLimit, fieldsArr[0].length - 1)
-      }
+      };
 
       var arr = [];
 
@@ -114,31 +104,36 @@
           // if distance is lower than range limit
           if (distance(this.x, this.y, x, y) <= this.rangeLimit) {
             // If field contains no obstacles add its coordinates to array
-            (isInArray([x, y], obstacles)) ? null :  arr.push([x, y]);
+            (isInArray([x, y], obstacles)) ? null : arr.push([x, y]);
           }
         }
       }
       this.possibleMoves = arr;
-    }
+    };
 
     // Update position
-    this.updatePosition = function (fieldArr, [x, y]) {
-      this.x = x;
-      this.y = y;
-    }
+    this.updatePosition = function (fieldArr, coordinates) {
+      this.x = coordinates[0];
+      this.y = coordinates[1];
+    };
 
-    this.positonIsPossible = function(coordinates){
+    // Check if coordinates are allowed to move to
+    this.positonIsPossible = function (coordinates) {
       return isInArray([coordinates[0], coordinates[1]], this.possibleMoves);
-    }
+    };
 
-    this.updateBattleMode = function(isDefend){
+    // Update player battle mode
+    // - true - defend
+    // - false - attack
+    this.updateBattleMode = function (isDefend) {
       this.defend = isDefend;
-    }
-  }
+    };
+  };
 
 // ----------  Next step -------------------------------------------//
-  var NextStep = function(){
-    this.init = function(player){
+// Object to allow player choose new position on board regarding all limitations
+  var NextStep = function () {
+    this.init = function (player) {
       // Origin player
       this.origin = player;
       // Current distance
@@ -150,19 +145,20 @@
       this.y = this.origin.y;
       // List of following moves
       this.path = [[this.x, this.y]];
-    }
+    };
 
     // Check if next step is possible for origin player
     this.isPossible = function (coordinates) {
       return isInArray(coordinates, this.origin.possibleMoves);
-    }
+    };
 
-    this.updatePosition = function(coordinates){
+    // Update last position on path
+    this.updatePosition = function (coordinates) {
       var inPathIndex = getCoordinatesIndex(coordinates, this.path);
       // if coordinates are not in the path
       if (inPathIndex < 0) {
         // if number of steps is lower than stepLimit
-        if (this.path.length < this.stepLimit){
+        if (this.path.length < this.stepLimit) {
           // add coordinates it to the path
           this.path.push(coordinates);
           // update nextStep
@@ -170,30 +166,31 @@
           this.y = coordinates[1];
           this.distance = distance(this.x, this.y, this.origin.x, this.origin.y);
         }
-      // if they are in path, slice path to new including this coordinates
-      } else if (inPathIndex => 0) {
+      // if coordinates are in path, slice path to new one including  coordinates at the end
+      } else {
         this.path = this.path.slice(0, inPathIndex + 1);
         this.x = coordinates[0];
         this.y = coordinates[1];
         this.distance = distance(this.x, this.y, this.origin.x, this.origin.y);
       }
-    }
+    };
 
-    this.updateOrigin = function(player){
+    // Update path origin player
+    this.updateOrigin = function (player) {
       this.origin = player;
       this.distance = 0;
       this.x = this.origin.x;
       this.y = this.origin.y;
       this.path = [[this.x, this.y]];
-    }
-  }
+    };
+  };
 
 // ---------- Game object -------------------------------------------
 
   var Game = function () {
-    this.init = function(boardSize = 10, rangeLimit = 3, initialPower = 100, defaultWeapon = 0){
-      this.initialPower = initialPower;
-      this.defaultWeapon = defaultWeapon;
+    this.init = function (boardSize, rangeLimit, initialPower, defaultWeapon) {
+      this.initialPower = initialPower || 100;
+      this.defaultWeapon = defaultWeapon || 0;
 
       // Counter of turns
       this.turnCounter = 0;
@@ -228,16 +225,15 @@
       // Initialize game and battle state
       this.state = 0;
       this.battleState = 0;
-    }
+    };
 
     // Get opponent
     this.getOpponnent = function (player) {
       return (player === this.playerOne) ? this.playerTwo : this.playerOne;
-    }
+    };
 
     // Update player position as well as previous and actual board fields content and turn counter
     this.actionMove = function (player, newCoordinates) {
-
       // Update player position and range
       player.updatePosition(this.board.fields, newCoordinates);
 
@@ -249,15 +245,15 @@
 
       // Update turn counter
       this.turnCounter++;
-    }
+    };
 
     // Battle - update players power and weapon level depending on battle mode modeeselected
-    this.actionBattle = function (playerOneDefend, playerTwoDefend){
+    this.actionBattle = function (playerOneDefend, playerTwoDefend) {
       var damageOne = this.initialPower * this.playerTwo.weapon;
       var damageTwo = this.initialPower * this.playerOne.weapon;
 
-      if (playerOneDefend){
-        if (playerTwoDefend){
+      if (playerOneDefend) {
+        if (playerTwoDefend) {
           // Player One defends, Player Two defends - no one attacks
         } else {
           // Player One defends, player Two attacks
@@ -265,7 +261,7 @@
           this.playerTwo.weapon = this.defaultWeapon;
         }
       } else {
-        if (playerTwoDefend){
+        if (playerTwoDefend) {
           // Player One attacks, player two defends
           this.playerTwo.power -= damageTwo * 0.5;
           this.playerOne.weapon = this.defaultWeapon;
@@ -278,7 +274,7 @@
         }
       }
       console.log('One', this.playerOne.power, 'Two', this.playerTwo.power);
-    }
+    };
 
     // Game states
     // 0 - 'welcome',
@@ -293,50 +289,48 @@
     // Change game state
     this.updateState = function (newState) {
       this.state = newState;
-    }
-    this.updateBattleState = function (newState) {
-      this.battleState =  newState;
-    }
-  }
+    };
 
+    // Change battle state
+    this.updateBattleState = function (newState) {
+      this.battleState = newState;
+    };
+  }
+;
 // ---------- Global functions ----------------------------------------
 
   // Get random number
-  function getRandomNumber(number){
-    return (number > 1)
-      ? Math.floor(Math.random() * Number(number))
-      : 0;
+  function getRandomNumber (number) {
+    return (number > 1) ? Math.floor(Math.random() * Number(number)) : 0;
   }
 
   // Calculate distance
-  function distance(x1, y1, x2, y2){
+  function distance (x1, y1, x2, y2) {
     return Math.abs(x1 - x2) + Math.abs(y1 - y2);
   }
 
   // Check if coordinates exists in array
-  function isInArray([x, y], array){
+  function isInArray (coordinates, array) {
     var existsInArr = array.some(
-      function(element){
-        if ((element[0] === x) && (element[1] === y)){
+      function (element) {
+        if ((element[0] === coordinates[0]) && (element[1] === coordinates[1])) {
           return true;
         }
         return false;
-      }
-    );
+      });
     return existsInArr;
   }
 
   // Check if coordinates exists in array
-  function getCoordinatesIndex([x, y], array){
+  function getCoordinatesIndex (coordinates, array) {
     var ind = -1;
     array.some(
-      function(element, index){
-        if ((element[0] === x) && (element[1] === y)){
+      function (element, index) {
+        if ((element[0] === coordinates[0]) && (element[1] === coordinates[1])) {
           ind = index;
           return true;
         }
         return false;
-      }
-    );
+      });
     return ind;
   }
