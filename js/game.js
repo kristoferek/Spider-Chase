@@ -79,7 +79,7 @@
       this.rangeLimit = rangeLimit || 3;
       this.possibleMoves = [];
       this.power = power || 100;
-      this.weapon = weapon || 0;
+      this.weapon = weapon || {damage: 0.1, model: 'default'};
       this.customClass = customClass;
       this.defend = false;
     };
@@ -117,9 +117,24 @@
       this.y = coordinates[1];
     };
 
-    // Check if coordinates are allowed to move to
+    // Check if coordinates [x, y] are allowed to move to
     this.positonIsPossible = function (coordinates) {
       return isInArray([coordinates[0], coordinates[1]], this.possibleMoves);
+    };
+
+    // Update player power
+    this.updatePower = function (power) {
+      if (power) this.power = power;
+    };
+
+    // Update player weapon
+    this.updateWeapon = function (newWeapon) {
+      this.weapon = newWeapon;
+    };
+
+    // Update player weapon
+    this.improveWeapon = function (newWeapon) {
+      if (newWeapon.damage > this.weapon.damage) this.weapon = newWeapon;
     };
 
     // Update player battle mode
@@ -185,12 +200,19 @@
     };
   };
 
+// ---------- Weapon object -------------------------------------------
+  // damage - float - 0.1 ... 0.5
+  // model - string
+  var Weapon = function (damage, model) {
+    this.damage = damage || 0.1;
+    this.model = model || 'default';
+  };
+
 // ---------- Game object -------------------------------------------
 
   var Game = function () {
-    this.init = function (boardSize, rangeLimit, initialPower, defaultWeapon) {
+    this.init = function (boardSize, rangeLimit, initialPower, defaultDamage, obstaclesNumber, weaponsNumber) {
       this.initialPower = initialPower || 100;
-      this.defaultWeapon = defaultWeapon || 0;
 
       // Counter of turns
       this.turnCounter = 0;
@@ -202,11 +224,15 @@
       // Generate random list of coordinates of board fields
       // - randXYList[0][0,1] for playerOne
       // - randXYList[1][0,1] for playerTwo
-      // - randXYList[...rest] - for obstacles
-      var randXYList = this.board.randomFieldList(20);
+      // - randXYList[2, ..., randXYList - obstaclesNumber] - for obstacles
+      // - randXYList[randXYList - obstaclesNumber, ... ] - for weapons
+      var randXYList = this.board.randomFieldList(2 + obstaclesNumber + weaponsNumber);
 
-      // Set array of coordinats for obstacles
-      this.obstacles = randXYList.slice(2).sort();
+      // Set array of coordinates for obstacles
+      this.obstacles = randXYList.slice(2, randXYList.length - weaponsNumber).sort();
+
+      // Set array of coordinates for weapons
+      this.weapons = randXYList.slice(randXYList.length - weaponsNumber).sort();
 
       // Initialize player one
       this.playerOne = new Player();
@@ -221,6 +247,9 @@
 
       // Update possible moves array for player Two
       this.playerTwo.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerOne.x, this.playerOne.y]]));
+
+      // Initialize weapons
+      this.defaultWeapon = new Weapon(defaultDamage, 'default');
 
       // Initialize game and battle state
       this.state = 0;
@@ -248,29 +277,29 @@
     };
 
     // Battle - update players power and weapon level depending on battle mode modeeselected
-    this.actionBattle = function (playerOneDefend, playerTwoDefend) {
-      var damageOne = this.initialPower * this.playerTwo.weapon;
-      var damageTwo = this.initialPower * this.playerOne.weapon;
+    this.actionBattle = function (playerOne, playerTwo) {
+      var damageOne = this.initialPower * this.playerTwo.weapon.damage;
+      var damageTwo = this.initialPower * this.playerOne.weapon.damage;
 
-      if (playerOneDefend) {
-        if (playerTwoDefend) {
+      if (playerOne.defend) {
+        if (playerTwo.defend) {
           // Player One defends, Player Two defends - no one attacks
         } else {
           // Player One defends, player Two attacks
-          this.playerOne.power -= damageOne * 0.5;
-          this.playerTwo.weapon = this.defaultWeapon;
+          this.playerOne.updatePower(this.playerOne.power - damageOne * 0.5);
+          this.playerTwo.updateWeapon(this.defaultWeapon);
         }
       } else {
-        if (playerTwoDefend) {
+        if (playerTwo.defend) {
           // Player One attacks, player two defends
-          this.playerTwo.power -= damageTwo * 0.5;
-          this.playerOne.weapon = this.defaultWeapon;
+          this.playerTwo.updatePower(this.playerTwo.power - damageTwo * 0.5);
+          this.playerOne.updateWeapon(this.defaultWeapon);
         } else {
           // Player One attacks, player two attacks
-          this.playerOne.power -= damageOne;
-          this.playerTwo.power -= damageTwo;
-          this.playerOne.weapon = this.defaultWeapon;
-          this.playerTwo.weapon = this.defaultWeapon;
+          this.playerOne.updatePower(this.playerOne.power - damageOne);
+          this.playerOne.updateWeapon(this.defaultWeapon);
+          this.playerTwo.updatePower(this.playerTwo.power - damageTwo);
+          this.playerTwo.updateWeapon(this.defaultWeapon);
         }
       }
       console.log('One', this.playerOne.power, 'Two', this.playerTwo.power);

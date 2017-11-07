@@ -43,7 +43,7 @@ var Display = function () {
       var row = $('<div>').addClass('row');
       // For every field in a row
       for (var x = 0; x < fieldsArr.length; x++) {
-        // Create dive with class, id with field index number in name and sample content
+        // Create div with class, id with field index number in name and sample content
         var field = $('<div>').addClass((isInArray([x, y], obstacles) ? 'field ' + this.classNames.obstacle : 'field'));
         field.attr('id', 'field-' + x + y);
         field.append($('<div>').addClass('background').append($('<div>').addClass('object')));
@@ -71,9 +71,13 @@ var Display = function () {
 
   // Hide player
   this.hidePlayer = function (player) {
+    // hide path of possible moves
     this.nextStep.path.forEach(function (pathElement) {
       removeClassName([pathElement[0], pathElement[1]], this.classNames.path);
     }, this);
+    // hide nextStep
+    removeClassName([this.nextStep.x, this.nextStep.y], this.classNames.nextStep);
+    // hide player
     removeClassName([player.x, player.y], player.customClass);
   };
 
@@ -146,7 +150,7 @@ var Display = function () {
     var playerOnePowerLabel = $('<div>').addClass('power').text('Power: ');
     var playerOnePower = $('<div>').addClass('power').text(playerOne.power);
     var playerOneWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    var playerOneWeapon = $('<div>').addClass('weapon').text(-playerOne.weapon * 100 + '%');
+    var playerOneWeapon = $('<div>').addClass('weapon').text(-playerOne.weapon.damage * 100 + '%');
 
     var turn = $('<div>').addClass('turn').text(gameObject.urnCounter);
 
@@ -155,7 +159,7 @@ var Display = function () {
     var playerTwoPowerLabel = $('<div>').addClass('power').text('Power:');
     var playerTwoPower = $('<div>').addClass('power').text(playerTwo.power);
     var playerTwoWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    var playerTwoWeapon= $('<div>').addClass('weapon').text(-playerTwo.weapon * 100 + '%');
+    var playerTwoWeapon= $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
 
     this.toggleActive(plOne, plTwo, gameObject);
 

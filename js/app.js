@@ -2,7 +2,7 @@
 $(document).ready(function () {
   // initialize game object
   var myGame = new Game();
-  myGame.init(10, 3, 100, 0.1);
+  myGame.init(10, 3, 100, 0.1, 15, 3);
 
   // initialize display object
   var display = new Display();

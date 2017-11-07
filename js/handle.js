@@ -68,14 +68,14 @@ var Handle = function (gameObject, displayObject) {
       gameObject.updateBattleState(gameObject.battleState + 1);
       // Go to second player decision setting
       return (gameObject.state === 3) ? 4 : 3;
-      // If first player has made decision
+    // If first player has made decision
     } else if (gameObject.battleState === 1) {
       // Set second player decision
       player.updateBattleMode(decision);
       // Update battle state
       gameObject.updateBattleState(gameObject.battleState + 1);
       // Handle battle
-      gameObject.actionBattle(gameObject.playerOne.defend, gameObject.playerTwo.defend);
+      gameObject.actionBattle(gameObject.playerOne, gameObject.playerTwo);
       // reset battle state
       gameObject.updateBattleState(0);
       // Go to first player turn
@@ -91,7 +91,16 @@ var Handle = function (gameObject, displayObject) {
 
     var handle = this;
 
+    // var state = {
+    //   START: 0,
+    //   ...
+    // }
+    // var START = 0;
+    // var PLAYERONETURN = 1;
+    // var PLAYERTWOTURN = 2;
+
     switch (gameObject.state) {
+      // case state.START:
       case 0:
         // console.log('Welcome - game state:', gameObject.state);
         console.log('Press Enter to begin ');
