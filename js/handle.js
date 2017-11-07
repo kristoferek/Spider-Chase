@@ -21,8 +21,11 @@ var Handle = function (gameObject, displayObject) {
         displayObject.hidePlayerRange(player);
         displayObject.hidePlayer(player);
 
-        // Update player position and both player possible moves arrays
-        gameObject.actionMove(player, [displayObject.nextStep.x, displayObject.nextStep.y]);
+        // hide weapons
+        displayObject.hideWeapons(gameObject.weapons);
+
+        // Update player position, weapon and both player possible moves arrays
+        gameObject.actionMove(player, [displayObject.nextStep.x, displayObject.nextStep.y], displayObject.nextStep.path);
 
         // Reset nextStep and change its origin to opponent player
         displayObject.nextStep.updateOrigin(gameObject.getOpponnent(player));
@@ -32,6 +35,9 @@ var Handle = function (gameObject, displayObject) {
 
         // Display opponent player range
         displayObject.showPlayerRange(gameObject.getOpponnent(player));
+
+        // Dosplay weapons
+        displayObject.showWeapons(gameObject.weapons);
 
         // Check the distance between players
         var adjacent = (distance(player.x, player.y, gameObject.getOpponnent(player).x, gameObject.getOpponnent(player).y) < 2);

@@ -79,7 +79,7 @@
       this.rangeLimit = rangeLimit || 3;
       this.possibleMoves = [];
       this.power = power || 100;
-      this.weapon = weapon || {damage: 0.1, model: 'default'};
+      this.weapon = weapon;
       this.customClass = customClass;
       this.defend = false;
     };
@@ -104,7 +104,9 @@
           // if distance is lower than range limit
           if (distance(this.x, this.y, x, y) <= this.rangeLimit) {
             // If field contains no obstacles add its coordinates to array
-            (isInArray([x, y], obstacles)) ? null : arr.push([x, y]);
+            if (!isInArray([x, y], obstacles)) {
+              arr.push([x, y]);
+            }
           }
         }
       }
@@ -130,11 +132,6 @@
     // Update player weapon
     this.updateWeapon = function (newWeapon) {
       this.weapon = newWeapon;
-    };
-
-    // Update player weapon
-    this.improveWeapon = function (newWeapon) {
-      if (newWeapon.damage > this.weapon.damage) this.weapon = newWeapon;
     };
 
     // Update player battle mode
@@ -208,6 +205,11 @@
     this.model = model || 'default';
   };
 
+  Weapon.prototype.update = function (weaponObject) {
+    this.damage = weaponObject.damage;
+    this.model = weaponObject.model;
+  };
+
 // ---------- Game object -------------------------------------------
 
   var Game = function () {
@@ -221,6 +223,9 @@
       this.board = new Board();
       this.board.init(boardSize);
 
+      // Initialize weapons
+      this.defaultWeapon = new Weapon(defaultDamage, 'default');
+
       // Generate random list of coordinates of board fields
       // - randXYList[0][0,1] for playerOne
       // - randXYList[1][0,1] for playerTwo
@@ -231,8 +236,16 @@
       // Set array of coordinates for obstacles
       this.obstacles = randXYList.slice(2, randXYList.length - weaponsNumber).sort();
 
-      // Set array of coordinates for weapons
-      this.weapons = randXYList.slice(randXYList.length - weaponsNumber).sort();
+      // For defined numer (weaponNumber) of last indexes od coordinates
+      // array generate array of object of weapons with these coordinates
+      var arr = [];
+      randXYList.slice(randXYList.length - weaponsNumber).sort().forEach(function (itemXY, index) {
+        var newWeapon = new Weapon(defaultDamage * (index + 2), 'weapon' + (index + 2));
+        arr.push({x: itemXY[0], y: itemXY[1], weapon: newWeapon});
+      });
+      // Set array of coordinates and weapons
+      this.weapons = arr;
+      console.log(this.weapons);
 
       // Initialize player one
       this.playerOne = new Player();
@@ -248,9 +261,6 @@
       // Update possible moves array for player Two
       this.playerTwo.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerOne.x, this.playerOne.y]]));
 
-      // Initialize weapons
-      this.defaultWeapon = new Weapon(defaultDamage, 'default');
-
       // Initialize game and battle state
       this.state = 0;
       this.battleState = 0;
@@ -261,10 +271,41 @@
       return (player === this.playerOne) ? this.playerTwo : this.playerOne;
     };
 
+    // Updates weapon on each field containing weapon
+    // while player moves along path
+    this.updatePlayerWeaponOnPath = function (player, path) {
+      // for every succeeding path field
+      for (var i = 0; i < path.length; i++) {
+        for (var j = 0; j < this.weapons.length; j++) {
+          // If in this field there is a weapon available
+          if ((path[i][0] === this.weapons[j].x) && (path[i][1] === this.weapons[j].y)) {
+            // If player has only default weapon
+            if (player.weapon.model === this.defaultWeapon.model) {
+              // Update player weapon with this found on field
+              player.updateWeapon(this.weapons[j].weapon);
+              // Remove weapon from board
+              this.weapons[j].x = -1;
+              this.weapons[j].y = -1;
+            // If player has improved weapon
+            } else {
+              // Remember player weapon
+              var tempWeapon = player.weapon;
+              // Exchange player weapon to field weapon
+              player.updateWeapon(this.weapons[j].weapon);
+              // Exchange field weapon to player weapon
+              this.weapons[j].weapon = tempWeapon;
+            }
+          }
+        }
+      }
+    };
+
     // Update player position as well as previous and actual board fields content and turn counter
-    this.actionMove = function (player, newCoordinates) {
+    this.actionMove = function (player, newCoordinates, path) {
       // Update player position and range
       player.updatePosition(this.board.fields, newCoordinates);
+
+      this.updatePlayerWeaponOnPath(player, path);
 
       // Update possible position arrays for actual player excluding obstacles and opponent coordinates
       player.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.getOpponnent(player).x, this.getOpponnent(player).y]]));
@@ -340,14 +381,11 @@
 
   // Check if coordinates exists in array
   function isInArray (coordinates, array) {
-    var existsInArr = array.some(
-      function (element) {
-        if ((element[0] === coordinates[0]) && (element[1] === coordinates[1])) {
-          return true;
-        }
-        return false;
-      });
-    return existsInArr;
+    if (getCoordinatesIndex(coordinates, array) < 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   // Check if coordinates exists in array

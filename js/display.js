@@ -8,7 +8,7 @@ var Display = function () {
       playerTwo: gameObject.playerTwo.customClass,
       nextStep: 'step',
       obstacle: 'obstacle',
-      wepon: 'weapon',
+      weapon: 'weapon',
       range: 'range',
       path: 'path'
     };
@@ -27,6 +27,9 @@ var Display = function () {
     this.showPlayer(gameObject.playerOne);
     this.showPlayer(gameObject.playerTwo);
     this.showPlayerRange(gameObject.playerOne);
+
+    // Display weapons
+    this.showWeapons(gameObject.weapons);
 
     // Mount and hide decision modal window
     this.modal = new Modal();
@@ -130,6 +133,20 @@ var Display = function () {
     }
   };
 
+  // Show weapons
+  this.showWeapons = function (weapons) {
+    for (var i = 0; i < weapons.length; i++) {
+      addClassName([weapons[i].x, weapons[i].y], this.classNames.weapon);
+    }
+  };
+
+  this.hideWeapons = function (weapons) {
+    for (var i = 0; i < weapons.length; i++) {
+      removeClassName([weapons[i].x, weapons[i].y], this.classNames.weapon);
+    }
+  };
+
+  // Set active class for player information block
   this.toggleActive = function (elOne, elTwo, gameObject) {
     if (gameObject.state > 0) {
       if ((gameObject.state % 2) === 1) {
@@ -172,8 +189,12 @@ var Display = function () {
 
 // Find div with id and coordinates and add custom class
 var addClassName = function (coordinates, customClass) {
-  var element = $('#field-'.concat(coordinates[0], coordinates[1]));
-  element.hasClass(customClass) ? null : element.addClass(customClass);
+  if (coordinates[0] >= 0 && coordinates[1] >= 0){
+    var element = $('#field-'.concat(coordinates[0], coordinates[1]));
+    if (!element.hasClass(customClass)) {
+      element.addClass(customClass);
+    }
+  }
 };
 
 // Find div with id and coordinates and remove custom class
