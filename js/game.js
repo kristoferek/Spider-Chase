@@ -124,12 +124,12 @@
       return isInArray([coordinates[0], coordinates[1]], this.possibleMoves);
     };
 
-    // Update player power
+    // Update player power - power is Number
     this.updatePower = function (power) {
-      if (power) this.power = power;
+      if (power !== undefined) this.power = power;
     };
 
-    // Update player weapon
+    // Update player weapon - newWeapon is Weapon object
     this.updateWeapon = function (newWeapon) {
       this.weapon = newWeapon;
     };
@@ -214,6 +214,7 @@
 
   var Game = function () {
     this.init = function (boardSize, rangeLimit, initialPower, defaultDamage, obstaclesNumber, weaponsNumber) {
+      // Initial player power
       this.initialPower = initialPower || 100;
 
       // Counter of turns
@@ -261,9 +262,32 @@
       // Update possible moves array for player Two
       this.playerTwo.updatePossibleMoves(this.board.fields, this.obstacles.concat([[this.playerOne.x, this.playerOne.y]]));
 
+      // Define game states
+      this.states = {
+        START: 0,
+        PLAYERONE_TURN: 1,
+        PLAYERTWO_TURN: 2,
+        PLAYERONE_BATTLEMODE: 3,
+        PLAYERTWO_BATTLEMODE: 4,
+        GAMEOVER: 5,
+        QUIT: 6
+      };
+
+      this.battleModeStates = {
+        ON: true,
+        OFF: false
+      };
+
+      this.decisions = {
+        ATTACK: false,
+        DEFEND: true
+      };
+
       // Initialize game and battle state
-      this.state = 0;
-      this.battleState = 0;
+      this.state = this.states.START;
+
+      // Initilize battle mode selection state
+      this.battleModeState = this.battleModeStates.OFF;
     };
 
     // Get opponent
@@ -346,24 +370,14 @@
       console.log('One', this.playerOne.power, 'Two', this.playerTwo.power);
     };
 
-    // Game states
-    // 0 - 'welcome',
-    // 1 - 'playerOne turn',
-    // 2 - 'playerTwo turn',
-    // 3 - 'playerOne decision'
-    // 4 - 'playerTwo decision'
-    // 5 - 'finished',
-    // 6 - 'quit'
-    this.states = [0, 1, 2, 3, 4, 5, 6];
-
     // Change game state
     this.updateState = function (newState) {
       this.state = newState;
     };
 
     // Change battle state
-    this.updateBattleState = function (newState) {
-      this.battleState = newState;
+    this.updateBattleModeState = function (boolean) {
+      this.battleModeState = boolean;
     };
   }
 ;

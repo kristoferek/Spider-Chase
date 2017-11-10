@@ -92,7 +92,9 @@ var Display = function () {
       var field = $('#field-'.concat(player.possibleMoves[i][0], player.possibleMoves[i][1]));
       // Add 'range' class except player one or two field
       if (!(field.hasClass(this.classNames.playerOne) || field.hasClass(this.classNames.playerTwo))) {
-        field.hasClass(this.classNames.range) ? null : field.addClass(this.classNames.range);
+        if (!field.hasClass(this.classNames.range)) {
+          field.addClass(this.classNames.range);
+        }
       }
     }
   };
@@ -104,7 +106,9 @@ var Display = function () {
       // Find element with id #field-xy
       var field = $('#field-'.concat(player.possibleMoves[i][0], player.possibleMoves[i][1]));
       // Remove 'range' class except player one or two field
-      field.hasClass(this.classNames.range) ?  field.removeClass(this.classNames.range) : null;
+      if (field.hasClass(this.classNames.range)) {
+        field.removeClass(this.classNames.range);
+      }
     }
   };
 
@@ -148,11 +152,11 @@ var Display = function () {
 
   // Set active class for player information block
   this.toggleActive = function (elOne, elTwo, gameObject) {
-    if (gameObject.state > 0) {
-      if ((gameObject.state % 2) === 1) {
+    if (gameObject.state > gameObject.states.START) {
+      if (gameObject.state === gameObject.states.PLAYERONE_TURN || gameObject.state === gameObject.states.PLAYERONE_BATTLEMODE) {
         elOne.addClass('active');
         elTwo.removeClass('active');
-      } else {
+      } else if (gameObject.state === gameObject.states.PLAYERTWO_TURN || gameObject.state === gameObject.states.PLAYERTWO_BATTLEMODE) {
         elTwo.addClass('active');
         elOne.removeClass('active');
       }
@@ -176,7 +180,7 @@ var Display = function () {
     var playerTwoPowerLabel = $('<div>').addClass('power').text('Power:');
     var playerTwoPower = $('<div>').addClass('power').text(playerTwo.power);
     var playerTwoWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    var playerTwoWeapon= $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
+    var playerTwoWeapon = $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
 
     this.toggleActive(plOne, plTwo, gameObject);
 
