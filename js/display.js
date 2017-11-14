@@ -14,7 +14,7 @@ var Display = function () {
     };
 
     // Create next step object for player One
-    this.nextStep = new NextStep ();
+    this.nextStep = new NextStep();
     this.nextStep.init(gameObject.playerOne);
 
     // Create HTML board and display on page
@@ -91,11 +91,11 @@ var Display = function () {
       // Find element with id #field-xy
       var field = $('#field-'.concat(player.possibleMoves[i][0], player.possibleMoves[i][1]));
       // Add 'range' class except player one or two field
-      if (!(field.hasClass(this.classNames.playerOne) || field.hasClass(this.classNames.playerTwo))) {
+      // if (!(field.hasClass(this.classNames.playerOne) || field.hasClass(this.classNames.playerTwo))) {
         if (!field.hasClass(this.classNames.range)) {
           field.addClass(this.classNames.range);
         }
-      }
+      // }
     }
   };
 
@@ -137,16 +137,17 @@ var Display = function () {
     }
   };
 
-  // Show weapons
+  // Show weapons - weapon.model becomes class
   this.showWeapons = function (weapons) {
     for (var i = 0; i < weapons.length; i++) {
-      addClassName([weapons[i].x, weapons[i].y], this.classNames.weapon);
+      addClassName([weapons[i].x, weapons[i].y], weapons[i].weapon.model);
     }
   };
 
+  // Hide weapons - weapon.model becomes class
   this.hideWeapons = function (weapons) {
     for (var i = 0; i < weapons.length; i++) {
-      removeClassName([weapons[i].x, weapons[i].y], this.classNames.weapon);
+      removeClassName([weapons[i].x, weapons[i].y], weapons[i].weapon.model);
     }
   };
 
@@ -193,7 +194,7 @@ var Display = function () {
 
 // Find div with id and coordinates and add custom class
 var addClassName = function (coordinates, customClass) {
-  if (coordinates[0] >= 0 && coordinates[1] >= 0){
+  if (coordinates[0] >= 0 && coordinates[1] >= 0) {
     var element = $('#field-'.concat(coordinates[0], coordinates[1]));
     if (!element.hasClass(customClass)) {
       element.addClass(customClass);
@@ -204,7 +205,9 @@ var addClassName = function (coordinates, customClass) {
 // Find div with id and coordinates and remove custom class
 var removeClassName = function (coordinates, customClass) {
   var element = $('#field-'.concat(coordinates[0], coordinates[1]));
-  element.hasClass(customClass) ? element.removeClass(customClass) : null;
+  if (element.hasClass(customClass)) {
+    element.removeClass(customClass);
+  }
 };
 
 // Modal window for battle mode desicion

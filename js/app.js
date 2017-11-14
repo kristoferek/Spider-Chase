@@ -2,7 +2,7 @@
 $(document).ready(function () {
   // initialize game object
   var myGame = new Game();
-  myGame.init(10, 3, 100, 0.1, 15, 4);
+  myGame.init(10, 3, 100, 1, 15, 4);
 
   // initialize display object
   var display = new Display();
@@ -10,9 +10,6 @@ $(document).ready(function () {
 
   // initialize game handlers
   var handle = new Handle();
-
-  console.log(myGame);
-  // console.log(display);
 
   // run game, display and handlers
   handle.gameState(myGame, display);

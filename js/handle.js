@@ -110,7 +110,9 @@ var Handle = function (gameObject, displayObject) {
         // console.log('Welcome - game state:', gameObject.state);
         console.log('Press Enter to begin ');
         $(window).keydown(function (event) {
-          (event.key === 'Enter') ? gameObject.updateState(gameObject.states.PLAYERONE_TURN) : null;
+          if (event.key === 'Enter') {
+            gameObject.updateState(gameObject.states.PLAYERONE_TURN);
+          }
           handle.gameState(gameObject, displayObject);
         });
         break;

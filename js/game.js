@@ -98,18 +98,61 @@
 
       var arr = [];
 
-      // Generate range array of coordinates
-      for (var x = topLeft.x; x <= bottomRight.x; x++) {
-        for (var y = topLeft.y; y <= bottomRight.y; y++) {
-          // if distance is lower than range limit
-          if (distance(this.x, this.y, x, y) <= this.rangeLimit) {
-            // If field contains no obstacles add its coordinates to array
-            if (!isInArray([x, y], obstacles)) {
-              arr.push([x, y]);
-            }
-          }
+      // Generate array of coordinates in range on vertical and horizontal axis excluding obstacles
+      // Go TOP and add fields in range until first obstacle
+      for (var y = this.y; y >= topLeft.y; y--) {
+        // if distance is lower than range limit
+        if (distance(this.x, this.y, this.x, y) <= this.rangeLimit) {
+          // If field contains no obstacles add its coordinates to array
+          if (!isInArray([this.x, y], obstacles)) {
+            arr.push([this.x, y]);
+          } else break;
         }
       }
+      // Go RIGHT  and add fields in range until first obstacle
+      for (var x = this.x; x <= bottomRight.x; x++) {
+        // if distance is lower than range limit
+        if (distance(this.x, this.y, x, this.y) <= this.rangeLimit) {
+          // If field contains no obstacles add its coordinates to array
+          if (!isInArray([x, this.y], obstacles)) {
+            arr.push([x, this.y]);
+          } else break;
+        }
+      }
+      // Go DOWN and add fields in range until first obstacle
+      for (y = this.y; y <= bottomRight.y; y++) {
+        // if distance is lower than range limit
+        if (distance(this.x, this.y, this.x, y) <= this.rangeLimit) {
+          // If field contains no obstacles add its coordinates to array
+          if (!isInArray([this.x, y], obstacles)) {
+            arr.push([this.x, y]);
+          } else break;
+        }
+      }
+      // Go LEFT and add fields in range until first obstacle
+      for (x = this.x; x >= topLeft.x; x--) {
+        // if distance is lower than range limit
+        if (distance(this.x, this.y, x, this.y) <= this.rangeLimit) {
+          // If field contains no obstacles add its coordinates to array
+          if (!isInArray([x, this.y], obstacles)) {
+            arr.push([x, this.y]);
+          } else break;
+        }
+      }
+
+      // // Generate range array of coordinates for all fields in range
+      // for (var x = topLeft.x; x <= bottomRight.x; x++) {
+      //   for (var y = topLeft.y; y <= bottomRight.y; y++) {
+      //     // if distance is lower than range limit
+      //     if (distance(this.x, this.y, x, y) <= this.rangeLimit) {
+      //       // If field contains no obstacles add its coordinates to array
+      //       if (!isInArray([x, y], obstacles)) {
+      //         arr.push([x, y]);
+      //       }
+      //     }
+      //   }
+      // }
+
       this.possibleMoves = arr;
     };
 
@@ -198,10 +241,10 @@
   };
 
 // ---------- Weapon object -------------------------------------------
-  // damage - float - 0.1 ... 0.5
+  // damage - multiplier - 2 x 0.1 = 0.2 ... 5 * 0.1 = 0.5
   // model - string
-  var Weapon = function (damage, model) {
-    this.damage = damage || 0.1;
+  var Weapon = function (damageMultiplier, model) {
+    this.damage = damageMultiplier || 1;
     this.model = model || 'default';
   };
 
@@ -246,7 +289,6 @@
       });
       // Set array of coordinates and weapons
       this.weapons = arr;
-      console.log(this.weapons);
 
       // Initialize player one
       this.playerOne = new Player();
@@ -312,12 +354,15 @@
               this.weapons[j].y = -1;
             // If player has improved weapon
             } else {
-              // Remember player weapon
-              var tempWeapon = player.weapon;
-              // Exchange player weapon to field weapon
-              player.updateWeapon(this.weapons[j].weapon);
-              // Exchange field weapon to player weapon
-              this.weapons[j].weapon = tempWeapon;
+              // exchange weapon for every step on path excluding start position
+              if (i > 0) {
+                // Remember player weapon
+                var tempWeapon = player.weapon;
+                // Exchange player weapon to field weapon
+                player.updateWeapon(this.weapons[j].weapon);
+                // Exchange field weapon to player weapon
+                this.weapons[j].weapon = tempWeapon;
+              }
             }
           }
         }
@@ -343,8 +388,8 @@
 
     // Battle - update players power and weapon level depending on battle mode modeeselected
     this.actionBattle = function (playerOne, playerTwo) {
-      var damageOne = this.initialPower * this.playerTwo.weapon.damage;
-      var damageTwo = this.initialPower * this.playerOne.weapon.damage;
+      var damageOne = this.initialPower * this.playerTwo.weapon.damage / 10;
+      var damageTwo = this.initialPower * this.playerOne.weapon.damage / 10;
 
       if (playerOne.defend) {
         if (playerTwo.defend) {
@@ -367,7 +412,6 @@
           this.playerTwo.updateWeapon(this.defaultWeapon);
         }
       }
-      console.log('One', this.playerOne.power, 'Two', this.playerTwo.power);
     };
 
     // Change game state

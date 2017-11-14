@@ -109,20 +109,32 @@
   background-color: rgba(205, 166, 168, 0.84);
 }
 
-.weapon .background{
-  background-color: rgba(79, 171, 255, 1);
+[class*="weapon"] .object{
+  border-radius: 25%;
+}
+.weapon2 .object{
+  background-color: rgba(50, 255, 0, 0.3);
+}
+.weapon3 .object{
+  background-color: rgba(50, 255, 0, 0.5);
+}
+.weapon4 .object{
+  background-color: rgba(50, 255, 0, 0.7);
+}
+.weapon5 .object{
+  background-color: rgba(50, 255, 0, 1);
 }
 
-.playerOne .background, .playerTwo .background{
+[class*="player"] .object{
   border-radius: 50%;
   height: calc(100% - 6px);
   width: calc(100% - 6px);
   border: 3px solid lightgrey;
 }
 
-.playerOne .background{
+.playerOne .object{
   background-color: red;
 }
-.playerTwo .background{
+.playerTwo .object{
   background-color: green;
 }
