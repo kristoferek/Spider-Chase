@@ -1,0 +1,50 @@
+#board{
+    width: auto;
+    margin: 10px auto;
+    position: relative;
+}
+
+#board{
+  min-width: 100px;
+  max-width: 600px;
+  max-height: 600px;
+  background-color: black
+}
+
+.row{
+  display: flex;
+  width: 100%;
+  min-height: 1px;
+}
+
+.field{
+  min-width: 50px;
+  width: 58px;
+  height: 58px;
+  /*padding: 3px;*/
+  text-align: center;
+  background-color: white;
+  border: 1px solid grey;
+  position: relative;
+}
+
+.background, .object {
+  height: 100%;
+  width: 100%;
+}
+
+.obstacle .background{
+  background-color: rgba(30, 9, 18, 0.49);
+}
+
+.range .background{
+    background-color: rgba(205, 166, 168, 0.34);
+}
+
+.path .background{
+  background-color: rgba(205, 166, 168, 0.64);
+}
+
+.step .background{
+  background-color: rgba(205, 166, 168, 0.84);
+}

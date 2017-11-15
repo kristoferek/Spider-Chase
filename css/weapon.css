@@ -1,0 +1,15 @@
+[class*="weapon"] .object{
+  border-radius: 25%;
+}
+.weapon2 .object{
+  background-color: rgba(50, 255, 0, 0.3);
+}
+.weapon3 .object{
+  background-color: rgba(50, 255, 0, 0.5);
+}
+.weapon4 .object{
+  background-color: rgba(50, 255, 0, 0.7);
+}
+.weapon5 .object{
+  background-color: rgba(50, 255, 0, 1);
+}

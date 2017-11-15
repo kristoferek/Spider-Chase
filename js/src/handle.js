@@ -87,6 +87,10 @@ var Handle = function (gameObject, displayObject) {
       gameObject.actionBattle(gameObject.playerOne, gameObject.playerTwo);
       // Reset battle state
       gameObject.updateBattleModeState(gameObject.battleModeStates.OFF);
+      // If one of players power is lower then zero go to GAMEOVER state
+      if (gameObject.playerOne.power <= 0 || gameObject.playerTwo.power <= 0) {
+        return gameObject.states.GAMEOVER;
+      }
       // Go to first player turn
       if (gameObject.state === gameObject.states.PLAYERONE_BATTLEMODE) {
         return gameObject.states.PLAYERTWO_TURN;
@@ -199,6 +203,9 @@ var Handle = function (gameObject, displayObject) {
 
       // Handle Game Over
       case gameObject.states.GAMEOVER:
+        // Activate player information
+        displayObject.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
+
         console.log('Press Q to exit program');
         $(window).keydown(function (event) {
           if (event.key === 'q') {
