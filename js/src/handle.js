@@ -17,27 +17,29 @@ var Handle = function (gameObject, displayObject) {
         displayObject.showNextPossibleStep([displayObject.nextStep.x - 1, displayObject.nextStep.y]);
         break;
       case 'Enter':
-        // hide actual player path, range and position
-        displayObject.hidePlayerRange(player);
-        displayObject.hidePlayer(player);
 
-        // hide weapons
-        displayObject.hideWeapons(gameObject.weapons);
-
-        // Update player position, weapon and both player possible moves arrays
-        gameObject.actionMove(player, [displayObject.nextStep.x, displayObject.nextStep.y], displayObject.nextStep.path);
-
-        // Reset nextStep and change its origin to opponent player
-        displayObject.nextStep.updateOrigin(gameObject.getOpponnent(player));
-
-        // Show updated player and range in new position
-        displayObject.showPlayer(player);
-
-        // Display opponent player range
-        displayObject.showPlayerRange(gameObject.getOpponnent(player));
-
-        // Dosplay weapons
-        displayObject.showWeapons(gameObject.weapons);
+        displayObject.playerMoves(gameObject, player);
+        // // hide actual player path, range and position
+        // displayObject.hidePlayerRange(player);
+        // displayObject.hidePlayer(player);
+        //
+        // // hide weapons
+        // displayObject.hideWeapons(gameObject.weapons);
+        //
+        // // Update player position, weapon and both player possible moves arrays
+        // gameObject.actionMove(player, [displayObject.nextStep.x, displayObject.nextStep.y], displayObject.nextStep.path);
+        //
+        // // Reset nextStep and change its origin to opponent player
+        // displayObject.nextStep.updateOrigin(gameObject.getOpponnent(player));
+        //
+        // // Show updated player and range in new position
+        // displayObject.showPlayer(player);
+        //
+        // // Display opponent player range
+        // displayObject.showPlayerRange(gameObject.getOpponnent(player));
+        //
+        // // Dosplay weapons
+        // displayObject.showWeapons(gameObject.weapons);
 
         // Check the distance between players
         var adjacent = (distance(player.x, player.y, gameObject.getOpponnent(player).x, gameObject.getOpponnent(player).y) < 2);

@@ -1,14 +1,16 @@
 
 .playerOne .object, .playerTwo .object{
-  width: 100%;
-  height: 100%;
-  background-position: -35px -50px;
+  width: 98px;
+  height: 98px;
+  left: -20px;
+  top: -20px;
+  background-position: -15px -30px;
   z-index: 1;
 }
 
 /* ---------------------------   Sprites ----------------- */
 /* Sprites are pictures of spiders of size 128 x 128px */
-/*   moved initialy 35px to the left and 50px up to center ant on .filed */
+/*   moved initialy 15px to the left and 30px up to center ant on .filed */
 
 .playerOne .object{
   background-image: url('../img/spider_red.png');
@@ -21,136 +23,238 @@
 
 /* Spider stands and looks to the TOP */
 @-webkit-keyframes steady-top{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
 }
 @keyframes steady-top{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
 }
 
 /* Spider stands and looks on RIGHT */
 @-webkit-keyframes steady-right{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
 }
 @keyframes steady-right{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
 }
 
 /* Spider stands and looks on BOTTOM */
 @-webkit-keyframes steady-bottom{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
 }
 @keyframes steady-bottom{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
 }
 
 /* Spider stands and looks to the LEFT */
 @-webkit-keyframes steady-left{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
 }
 @keyframes steady-left{
-  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
+  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
 }
 
 /* --- While moving --- */
 
 /* Spider is moving to the TOP */
-@-webkit-keyframes moving-top{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -2) - 50px); }
+@-webkit-keyframes move-top{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -2) - 30px); }
 }
-@keyframes moving-top{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -2) - 50px); }
+@keyframes move-top{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -2) - 30px); }
+}
+
+.move-top {
+  -webkit-animation: move-top 0.5s steps(8) infinite;
+  animation: move-top 0.5s steps(8) infinite;
 }
 
 /* Spider is moving to the RIGHT */
-@-webkit-keyframes moving-right{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -4) - 50px); }
+@-webkit-keyframes move-right{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -4) - 30px); }
 }
-@keyframes moving-right{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -4) - 50px); }
+@keyframes move-right{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -4) - 30px); }
+}
+
+.move-right {
+  -webkit-animation: move-right 0.5s steps(8) infinite;
+  animation: move-right 0.5s steps(8) infinite;
 }
 
 /* Spider is moving to the BOTTOM */
-@-webkit-keyframes moving-bottom{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -6) - 50px); }
+@-webkit-keyframes move-bottom{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -6) - 30px); }
 }
-@keyframes moving-bottom{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -6) - 50px); }
+@keyframes move-bottom{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -6) - 30px); }
+}
+
+.move-bottom {
+  -webkit-animation: move-bottom 0.5s steps(8) infinite;
+  animation: move-bottom 0.5s steps(8) infinite;
 }
 
 /* Spider is moving to the LEFT */
-@-webkit-keyframes moving-left{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * 0) - 50px); }
+@-webkit-keyframes move-left{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * 0) - 30px); }
 }
-@keyframes moving-left{
-  from { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * 0) - 50px); }
+@keyframes move-left{
+  from { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * 0) - 30px); }
+}
+
+.move-left {
+  -webkit-animation: move-left 0.5s steps(8) infinite;
+  animation: move-left 0.5s steps(8) infinite;
 }
 
 /* --- While attacking --- */
 
 /* Spider is attacking to the TOP */
 @-webkit-keyframes attack-top{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -2) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -2) - 30px); }
 }
 @keyframes attack-top{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -2) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -2) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -2) - 30px); }
 }
 
 /* Spider is attacking to the RIGHT */
 @-webkit-keyframes attack-right{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -4) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -4) - 30px); }
 }
 @keyframes attack-right{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -4) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -4) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -4) - 30px); }
 }
 
 /* Spider is attacking to the BOTTOM */
 @-webkit-keyframes attack-bottom{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -6) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -6) - 30px); }
 }
 @keyframes attack-bottom{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * -6) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * -6) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -6) - 30px); }
 }
 
 /* Spider is attacking to the LEFT */
 @-webkit-keyframes attack-left{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * 0) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * 0) - 30px); }
 }
 @keyframes attack-left{
-  from { background-position: calc(calc(128px * -12) - 35px) calc(calc(128px * 0) - 50px); }
-  to { background-position: calc(calc(128px * -16) - 35px) calc(calc(128px * 0) - 50px); }
+  from { background-position: calc(calc(128px * -12) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * 0) - 30px); }
 }
 
+/* --- While defending --- */
 
+/* Spider is defending to the TOP */
+@-webkit-keyframes defend-top{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -2) - 30px); }
+}
+@keyframes defend-top{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -2) - 30px); }
+}
 
+/* Spider is defending to the RIGHT */
+@-webkit-keyframes defend-right{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -4) - 30px); }
+}
+@keyframes defend-right{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -4) - 30px); }
+}
+
+/* Spider is defending to the BOTTOM */
+@-webkit-keyframes defend-bottom{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -6) - 30px); }
+}
+@keyframes defend-bottom{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * -6) - 30px); }
+}
+
+/* Spider is defending to the LEFT */
+@-webkit-keyframes defend-left{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * 0) - 30px); }
+}
+@keyframes defend-left{
+  from { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -32) - 15px) calc(calc(128px * 0) - 30px); }
+}
+
+/* --- While dying --- */
+
+/* Spider is dying to the TOP */
+@-webkit-keyframes die-top{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -2) - 30px); }
+}
+@keyframes die-top{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -2) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -2) - 30px); }
+}
+
+/* Spider is dy to the RIGHT */
+@-webkit-keyframes die-right{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -4) - 30px); }
+}
+@keyframes die-right{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -4) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -4) - 30px); }
+}
+
+/* Spider is dy to the BOTTOM */
+@-webkit-keyframes die-bottom{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -6) - 30px); }
+}
+@keyframes die-bottom{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * -6) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * -6) - 30px); }
+}
+
+/* Spider is dy to the LEFT */
+@-webkit-keyframes die-left{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * 0) - 30px); }
+}
+@keyframes die-left{
+  from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * 0) - 30px); }
+  to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * 0) - 30px); }
+}
 
 .playerOne .object{
-  -webkit-animation: steady-left 1s steps(4) infinite;
-  animation: steady-left 0.5s steps(4) infinite;
+  /*-webkit-animation: steady-left 0.5s steps(4) infinite;
+  animation: steady-left 0.5s steps(4) infinite;*/
 }
+
 .playerTwo .object{
-  -webkit-animation: attack-right 1s steps(4) infinite;
-  animation: attack-right 1s steps(4) infinite;
+  /*-webkit-animation: steady-right 1s steps(4) infinite;
+  animation: steady-right 1s steps(4) infinite;*/
 }

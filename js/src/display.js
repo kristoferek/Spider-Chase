@@ -1,6 +1,7 @@
 /* eslint semi: ["error", "always"] */
 // ---------- Display -------------------------------------------
 var Display = function () {
+  var displayContext = this;
   this.init = function (gameObject) {
     // Display classes
     this.classNames = {
@@ -149,6 +150,101 @@ var Display = function () {
     for (var i = 0; i < weapons.length; i++) {
       removeClassName([weapons[i].x, weapons[i].y], weapons[i].weapon.model);
     }
+  };
+
+  this.getPathAnimationStyles = function (path, elWidth, elHeight) {
+    var animationStyles = [];
+
+    for (var i = 1; i < path.length; i++) {
+      if (path[i - 1][1] !== path[i][1]) {
+        if (path[i - 1][1] > path[i][1]) {
+          animationStyles.push(['top', -elHeight]);
+        } else {
+          animationStyles.push(['bottom', -elHeight]);
+        }
+      } else if (path[i - 1][0] !== path[i][0]) {
+        if (path[i - 1][0] > path[i][0]) {
+          animationStyles.push(['left', -elWidth]);
+        } else {
+          animationStyles.push(['right', -elWidth]);
+        }
+      }
+    }
+    return animationStyles;
+  };
+
+  // Show movement on specified distance and direction
+  this.animateStep = function (htmlElement, animationStyles, index){
+    if ((index >= 0) && (index < animationStyles.length)) {
+      var propertyName = animationStyles[index][0];
+      var currentDistance = (parseInt(htmlElement.css(propertyName)) + animationStyles[index][1]) + 'px';
+
+      var animationStyle = {};
+      animationStyle[propertyName] = currentDistance;
+      animationStyle['z-index'] = 1000;
+
+      htmlElement.children().eq(0).addClass('move-' + propertyName);
+      htmlElement.animate(animationStyle, 500, 'linear', function () {
+        htmlElement.css(propertyName, currentDistance).children().eq(0).removeClass('move-' + propertyName);
+        index++;
+        index = displayContext.animateStep(htmlElement, animationStyles, index);
+        console.log('index ',index);
+      });
+    }
+    return index;
+  };
+
+  // Show player moving animation
+  this.showPlayerMoving = function (player, path) {
+    var startElement = $('#field-'.concat(path[0][0], path[0][1]));
+    var elHeight = startElement.outerHeight();
+    var elWidth = startElement.outerWidth();
+
+    var animatedElement = startElement.find('.background');
+    var originalElement = animatedElement.clone(true);
+
+    var animationStyles = this.getPathAnimationStyles(path, elWidth, elHeight);
+
+    var animationIndex = 0;
+    startElement.addClass(player.customClass);
+
+    var resultIndex = this.animateStep(animatedElement, animationStyles, animationIndex);
+
+    var myTimer = setInterval(function () {
+      console.log(resultIndex);
+      if (resultIndex === animationStyles.length) {
+        animatedElement.remove();
+        startElement.removeClass(player.customClass).append(originalElement);
+
+        // Show updated player in new position
+        displayContext.showPlayer(player);
+        clearInterval(myTimer);
+      }
+    }, 100);
+  };
+
+  // Handle player move display and animation
+  this.playerMoves = function (gameObject, player) {
+    // hide actual player path, range and position
+    this.hidePlayerRange(player);
+    this.hidePlayer(player);
+
+    // hide weapons
+    displayContext.hideWeapons(gameObject.weapons);
+
+    // Update player position, weapon and both player possible moves arrays
+    gameObject.actionMove(player, [displayContext.nextStep.x, displayContext.nextStep.y], displayContext.nextStep.path);
+
+    // Show moving animation
+    this.showPlayerMoving(player, this.nextStep.path);
+
+    // Reset nextStep and change its origin to opponent player
+    displayContext.nextStep.updateOrigin(gameObject.getOpponnent(player));
+    // Display weapons
+    displayContext.showWeapons(gameObject.weapons);
+
+    // Display opponent player range
+    displayContext.showPlayerRange(gameObject.getOpponnent(player));
   };
 
   // Set active class for player information block

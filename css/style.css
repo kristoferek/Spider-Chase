@@ -5,7 +5,7 @@
 @import "./player.css";
 
 .background{
-  position: relative;
+  position: absolute;
 }
 
 .object{
