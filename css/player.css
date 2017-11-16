@@ -1,21 +1,20 @@
-
-.playerOne .object, .playerTwo .object{
+.playerOne .object, .playerTwo .object, .playerOne .moving, .playerTwo .moving{
   width: 98px;
   height: 98px;
   left: -20px;
   top: -20px;
   background-position: -15px -30px;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* ---------------------------   Sprites ----------------- */
 /* Sprites are pictures of spiders of size 128 x 128px */
 /*   moved initialy 15px to the left and 30px up to center ant on .filed */
 
-.playerOne .object{
+.playerOne .object, .playerOne .moving{
   background-image: url('../img/spider_red.png');
 }
-.playerTwo .object{
+.playerTwo .object, .playerTwo .moving{
   background-image: url('../img/spider_green.png');
 }
 
@@ -247,14 +246,4 @@
 @keyframes die-left{
   from { background-position: calc(calc(128px * -16) - 15px) calc(calc(128px * 0) - 30px); }
   to { background-position: calc(calc(128px * -24) - 15px) calc(calc(128px * 0) - 30px); }
-}
-
-.playerOne .object{
-  /*-webkit-animation: steady-left 0.5s steps(4) infinite;
-  animation: steady-left 0.5s steps(4) infinite;*/
-}
-
-.playerTwo .object{
-  /*-webkit-animation: steady-right 1s steps(4) infinite;
-  animation: steady-right 1s steps(4) infinite;*/
 }

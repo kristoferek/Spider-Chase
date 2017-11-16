@@ -247,7 +247,7 @@
     this.damage = damageMultiplier || 1;
     this.model = model || 'default';
   };
-
+  // Update weapon
   Weapon.prototype.update = function (weaponObject) {
     this.damage = weaponObject.damage;
     this.model = weaponObject.model;
@@ -314,12 +314,12 @@
         GAMEOVER: 5,
         QUIT: 6
       };
-
+      // Define battle states
       this.battleModeStates = {
         ON: true,
         OFF: false
       };
-
+      // Define battle modes
       this.decisions = {
         ATTACK: false,
         DEFEND: true

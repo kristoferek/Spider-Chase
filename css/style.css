@@ -4,11 +4,7 @@
 @import "./weapon.css";
 @import "./player.css";
 
-.background{
-  position: absolute;
-}
-
-.object{
+.background, .object, .moving{
   position: absolute;
 }
 
@@ -27,6 +23,7 @@
   /*align-content: space-between;*/
   /*justify-content: center;*/
   text-align: center;
+  z-index: 10;
 }
 
 .modal button{

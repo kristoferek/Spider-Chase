@@ -152,76 +152,101 @@ var Display = function () {
     }
   };
 
+// ------------------- Movement animation ----------------
+
+  // Generate array of step directions and lengths
   this.getPathAnimationStyles = function (path, elWidth, elHeight) {
+    // Initialize array
     var animationStyles = [];
 
+    // Go through path
     for (var i = 1; i < path.length; i++) {
+      // for vertical move
       if (path[i - 1][1] !== path[i][1]) {
+        // set valueus for moving TOP
         if (path[i - 1][1] > path[i][1]) {
           animationStyles.push(['top', -elHeight]);
+        // set valueus for moving BOTTOM
         } else {
           animationStyles.push(['bottom', -elHeight]);
         }
+      // for vertical move
       } else if (path[i - 1][0] !== path[i][0]) {
+        // set valueus for moving LEFT
         if (path[i - 1][0] > path[i][0]) {
           animationStyles.push(['left', -elWidth]);
+        // set valueus for moving RIGHT
         } else {
           animationStyles.push(['right', -elWidth]);
         }
       }
     }
+    // Return array
     return animationStyles;
   };
 
-  // Show movement on specified distance and direction
-  this.animateStep = function (htmlElement, animationStyles, index){
+  // Animate every step using array of step directions and lenghts
+  this.animateSteps = function (player, animatedElement, animationStyles, index) {
+    // If index in setps styles array
     if ((index >= 0) && (index < animationStyles.length)) {
-      var propertyName = animationStyles[index][0];
-      var currentDistance = (parseInt(htmlElement.css(propertyName)) + animationStyles[index][1]) + 'px';
-
+      // Set empty object for step style
       var animationStyle = {};
+      // Set step style object property name - step direction
+      var propertyName = animationStyles[index][0];
+      // compute step style object property value - step length
+      var currentDistance = (parseInt(animatedElement.css(propertyName)) + animationStyles[index][1]) + 'px';
+      // Set style object properities for step
       animationStyle[propertyName] = currentDistance;
-      animationStyle['z-index'] = 1000;
+      // animationStyle['z-index'] = 1000;
 
-      htmlElement.children().eq(0).addClass('move-' + propertyName);
-      htmlElement.animate(animationStyle, 500, 'linear', function () {
-        htmlElement.css(propertyName, currentDistance).children().eq(0).removeClass('move-' + propertyName);
-        index++;
-        index = displayContext.animateStep(htmlElement, animationStyles, index);
-        console.log('index ',index);
-      });
+      // Set background styling class (sprite animation) for child of main element
+      animatedElement.children().eq(0).addClass('move-' + propertyName);
+      // Apply animation for main element using step style object
+      animatedElement.animate(animationStyle, 500, 'linear',
+        // After animation completed
+        function () {
+          // Remove background styling class (sprite animation) for child of main element
+          animatedElement.css(propertyName, currentDistance).children().eq(0).removeClass('move-' + propertyName);
+          // increase index
+          index++;
+          // If index reached path length
+          if (index >= animationStyles.length) {
+            // Remove animation element from DOM
+            animatedElement.remove();
+            // Show updated player in new position
+            displayContext.showPlayer(player);
+          }
+          // Animate next step movemnt
+          displayContext.animateSteps(player, animatedElement, animationStyles, index);
+        }
+      );
     }
-    return index;
   };
 
-  // Show player moving animation
+  // Show moving player animation
   this.showPlayerMoving = function (player, path) {
+
+    // Set starting point of animation
     var startElement = $('#field-'.concat(path[0][0], path[0][1]));
+    // Get dimensions of starting field to set step length
     var elHeight = startElement.outerHeight();
     var elWidth = startElement.outerWidth();
 
-    var animatedElement = startElement.find('.background');
-    var originalElement = animatedElement.clone(true);
+    // Create element to animate by clonning starting point child
+    var animatedElement = $('<div>').addClass(player.customClass).addClass('background').append($('<div>').addClass('moving'));
+    // Insert element to animate into starting point
+    startElement.append(animatedElement);
 
+    // Set array of step directions and lenghts
     var animationStyles = this.getPathAnimationStyles(path, elWidth, elHeight);
-
+    // Set starting index
     var animationIndex = 0;
-    startElement.addClass(player.customClass);
 
-    var resultIndex = this.animateStep(animatedElement, animationStyles, animationIndex);
-
-    var myTimer = setInterval(function () {
-      console.log(resultIndex);
-      if (resultIndex === animationStyles.length) {
-        animatedElement.remove();
-        startElement.removeClass(player.customClass).append(originalElement);
-
-        // Show updated player in new position
-        displayContext.showPlayer(player);
-        clearInterval(myTimer);
-      }
-    }, 100);
+    // Animate steps
+    this.animateSteps(player, animatedElement, animationStyles, animationIndex);
   };
+
+// --------------------- Movement handling ----------------------
 
   // Handle player move display and animation
   this.playerMoves = function (gameObject, player) {
@@ -246,6 +271,8 @@ var Display = function () {
     // Display opponent player range
     displayContext.showPlayerRange(gameObject.getOpponnent(player));
   };
+
+// ----------------------------- information block ------------------
 
   // Set active class for player information block
   this.toggleActive = function (elOne, elTwo, gameObject) {
@@ -287,6 +314,9 @@ var Display = function () {
       .append(plTwo.append(playerTwoName).append(playerTwoPowerLabel).append(playerTwoPower).append(playerTwoWeaponLabel).append(playerTwoWeapon));
   };
 };
+
+
+// ----------------------- Helper functions --------------------
 
 // Find div with id and coordinates and add custom class
 var addClassName = function (coordinates, customClass) {
