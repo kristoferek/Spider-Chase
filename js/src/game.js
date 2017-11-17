@@ -191,8 +191,6 @@
     this.init = function (player) {
       // Origin player
       this.origin = player;
-      // Current distance
-      this.distance = 0;
       // Max number of steps
       this.stepLimit = player.rangeLimit + 1;
       // Board coordinates

@@ -15,7 +15,7 @@ var Display = function () {
     };
 
     // Create next step object for player One
-    this.nextStep = new NextStep();
+    this.nextStep = new NextStep ();
     this.nextStep.init(gameObject.playerOne);
 
     // Create HTML board and display on page
@@ -23,6 +23,8 @@ var Display = function () {
 
     // Display board
     this.showBoard(this.board);
+    // Activate player information
+    this.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
 
     // Display players
     this.showPlayer(gameObject.playerOne);
@@ -186,9 +188,21 @@ var Display = function () {
   };
 
   // Animate every step using array of step directions and lenghts
-  this.animateSteps = function (player, animatedElement, animationStyles, index) {
+  this.animateSteps = function (gameObject, player, animatedElement, animationStyles, index) {
+    // If index reached path length
+    if (index >= animationStyles.length) {
+      // Remove animation element from DOM
+      animatedElement.remove();
+      // Show updated player in new position
+      displayContext.showPlayer(player);
+      // Display actual player range
+      if (gameObject.state === gameObject.states.PLAYERONE_TURN) {
+        displayContext.showPlayerRange(gameObject.playerOne);
+      } else if (gameObject.state === gameObject.states.PLAYERTWO_TURN) {
+        displayContext.showPlayerRange(gameObject.playerTwo);
+      }
     // If index in setps styles array
-    if ((index >= 0) && (index < animationStyles.length)) {
+    } else if ((index >= 0) && (index < animationStyles.length)) {
       // Set empty object for step style
       var animationStyle = {};
       // Set step style object property name - step direction
@@ -199,51 +213,50 @@ var Display = function () {
       animationStyle[propertyName] = currentDistance;
       // animationStyle['z-index'] = 1000;
 
-      // Set background styling class (sprite animation) for child of main element
+      // Set background styling class (sprite animation) for child of animated element
       animatedElement.children().eq(0).addClass('move-' + propertyName);
       // Apply animation for main element using step style object
       animatedElement.animate(animationStyle, 500, 'linear',
         // After animation completed
         function () {
-          // Remove background styling class (sprite animation) for child of main element
+          // Remove background styling class (sprite animation) for child of animated element
           animatedElement.css(propertyName, currentDistance).children().eq(0).removeClass('move-' + propertyName);
+          // Animate next step movemnt
+          displayContext.animateSteps(gameObject, player, animatedElement, animationStyles, index + 1);
           // increase index
           index++;
-          // If index reached path length
-          if (index >= animationStyles.length) {
-            // Remove animation element from DOM
-            animatedElement.remove();
-            // Show updated player in new position
-            displayContext.showPlayer(player);
-          }
-          // Animate next step movemnt
-          displayContext.animateSteps(player, animatedElement, animationStyles, index);
         }
       );
     }
   };
 
   // Show moving player animation
-  this.showPlayerMoving = function (player, path) {
+  this.showPlayerMoving = function (gameObject, player, path) {
+    // If path is longer then one step (player changes position)
+    if (path.length > 1) {
+      // Set starting point of animation
+      var startElement = $('#field-'.concat(path[0][0], path[0][1]));
+      // Get dimensions of starting field to set step length
+      var elHeight = startElement.outerHeight();
+      var elWidth = startElement.outerWidth();
 
-    // Set starting point of animation
-    var startElement = $('#field-'.concat(path[0][0], path[0][1]));
-    // Get dimensions of starting field to set step length
-    var elHeight = startElement.outerHeight();
-    var elWidth = startElement.outerWidth();
+      // Create element to animate
+      var animatedElement = $('<div>').addClass(player.customClass).addClass('background').append($('<div>').addClass('moving'));
+      // Insert element to animate into starting point
+      startElement.append(animatedElement);
 
-    // Create element to animate by clonning starting point child
-    var animatedElement = $('<div>').addClass(player.customClass).addClass('background').append($('<div>').addClass('moving'));
-    // Insert element to animate into starting point
-    startElement.append(animatedElement);
+      // Set array of step directions and lenghts
+      var animationStyles = this.getPathAnimationStyles(path, elWidth, elHeight);
+      // Set starting index
+      var animationIndex = 0;
 
-    // Set array of step directions and lenghts
-    var animationStyles = this.getPathAnimationStyles(path, elWidth, elHeight);
-    // Set starting index
-    var animationIndex = 0;
-
-    // Animate steps
-    this.animateSteps(player, animatedElement, animationStyles, animationIndex);
+      // Animate steps
+      this.animateSteps(gameObject, player, animatedElement, animationStyles, animationIndex);
+    // If path is equal to one step (player is not moving in any direction)
+    } else {
+      this.showPlayer(player);
+      this.showPlayerRange(player);
+    }
   };
 
 // --------------------- Movement handling ----------------------
@@ -255,21 +268,19 @@ var Display = function () {
     this.hidePlayer(player);
 
     // hide weapons
-    displayContext.hideWeapons(gameObject.weapons);
+    this.hideWeapons(gameObject.weapons);
 
     // Update player position, weapon and both player possible moves arrays
-    gameObject.actionMove(player, [displayContext.nextStep.x, displayContext.nextStep.y], displayContext.nextStep.path);
+    gameObject.actionMove(player, [this.nextStep.x, this.nextStep.y], this.nextStep.path);
 
     // Show moving animation
-    this.showPlayerMoving(player, this.nextStep.path);
+    this.showPlayerMoving(gameObject, player, this.nextStep.path);
 
     // Reset nextStep and change its origin to opponent player
-    displayContext.nextStep.updateOrigin(gameObject.getOpponnent(player));
-    // Display weapons
-    displayContext.showWeapons(gameObject.weapons);
+    this.nextStep.updateOrigin(gameObject.getOpponnent(player));
 
-    // Display opponent player range
-    displayContext.showPlayerRange(gameObject.getOpponnent(player));
+    // Display weapons
+    this.showWeapons(gameObject.weapons);
   };
 
 // ----------------------------- information block ------------------

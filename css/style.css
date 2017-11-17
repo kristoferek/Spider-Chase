@@ -4,12 +4,19 @@
 @import "./weapon.css";
 @import "./player.css";
 
-.background, .object, .moving{
-  position: absolute;
+body {
+  background-color: rgba(200,200,200,0.1);
+  background-image: url('../img/gravel.jpg');
+  background-position: center;
+  background-size: cover;
 }
 
 .container{
   width: 100%;
+}
+
+.background, .object, .moving{
+  position: absolute;
 }
 
 .modal{

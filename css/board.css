@@ -4,8 +4,8 @@
   min-width: 100px;
   max-width: 600px;
   max-height: 600px;
-  margin: 10px auto;
-  background-color: black
+  margin: 5px auto;
+  box-shadow: 10px 10px 15px white, -10px -10px 15px white;
 }
 
 .row{
@@ -15,32 +15,52 @@
 }
 
 .field{
-  min-width: 50px;
+  min-width: 58px;
+  min-height: 58px;
   width: 58px;
   height: 58px;
   text-align: center;
-  background-color: white;
-  border: 1px solid grey;
+  border: 1px dashed rgba(10,10,10,0.2);
   position: relative;
 }
 
-.background, .object {
-  height: 100%;
+.background{
+  height: 56px;
+  width: 56px;
+  border: 1px solid rgba(255,255,255, 0);
+}
+
+.object{
   width: 100%;
+  height: 100%;
 }
 
 .obstacle .background{
-  background-color: rgba(30, 9, 18, 0.49);
+  background-color: rgba(30, 9, 18, 0.1);
 }
 
-.range .background{
-    background-color: rgba(205, 166, 168, 0.34);
+.obstacle .object{
+  border-radius: 50%;
+  background-image: url('../img/drop.png');
+  background-size: 58px 58px;
+  box-shadow: 9px 9px 10px rgba(10,10,10,0.5), -2px -1px 3px rgba(0,0,100,0.4);
+}
+
+.range .background, .path .background{
+  background-color: rgba(100, 100, 100, 0.14);
+  border: 1px solid rgba(255,255,255, 0.84);
+  border-radius: 25% 25% 25% 25%;
 }
 
 .path .background{
-  background-color: rgba(205, 166, 168, 0.64);
+  background-color: rgba(100, 100, 100, 0.24);
 }
 
 .step .background{
-  background-color: rgba(205, 166, 168, 0.84);
+  background-color: rgba(100, 100, 100, 0.44);
+  /*height: 52px;*/
+}
+.step .object{
+  /*border: 3px solid rgba(255,255,255, 0.84);
+  width: 52px;*/
 }

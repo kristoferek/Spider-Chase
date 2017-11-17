@@ -138,12 +138,12 @@ var Handle = function (gameObject, displayObject) {
 
         // Display modal for battle mode selection
         displayObject.modal.setTitle(gameObject.playerOne.customClass);
-        displayObject.modal.window.fadeIn();
+        displayObject.modal.window.fadeIn(200);
 
         // Handle player battle mode selection for ATTACK
         displayObject.modal.buttonAttack.on('click', function (event) {
           gameObject.updateState(handle.decision(gameObject, gameObject.playerOne, gameObject.decisions.ATTACK));
-          displayObject.modal.window.fadeOut();
+          displayObject.modal.window.fadeOut(100);
           // Handle game state
           handle.gameState(gameObject, displayObject);
         });
@@ -164,12 +164,12 @@ var Handle = function (gameObject, displayObject) {
 
         // Display modal for battle mode selection
         displayObject.modal.setTitle(gameObject.playerTwo.customClass);
-        displayObject.modal.window.fadeIn();
+        displayObject.modal.window.fadeIn(200);
 
         // Handle player battle mode selection for ATTACK
         displayObject.modal.buttonAttack.on('click', function (event) {
           gameObject.updateState(handle.decision(gameObject, gameObject.playerTwo, gameObject.decisions.ATTACK));
-          displayObject.modal.window.fadeOut();
+          displayObject.modal.window.fadeOut(100);
           // Handle game state
           handle.gameState(gameObject, displayObject);
         });
