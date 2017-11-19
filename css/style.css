@@ -3,40 +3,17 @@
 @import "./information.css";
 @import "./weapon.css";
 @import "./player.css";
+@import "./modal.css";
 
 body {
   background-color: rgba(200,200,200,0.1);
-  background-image: url('../img/gravel.jpg');
+  background-image: url('../img/concrete.jpg');
   background-position: center;
   background-size: cover;
 }
 
 .container{
   width: 100%;
-}
-
-.background, .object, .moving{
-  position: absolute;
-}
-
-.modal{
-  position: absolute;
-  width: 80%;
-  height: 80%;
-  background: rgba(255, 255, 255, 0.8);
-  left: 10%;
-  top: 10%;
-  /*display: flex;*/
-  /*align-content: space-between;*/
-  /*justify-content: center;*/
+  margin: calc(calc(100vh - 600px) / 2) auto;
   text-align: center;
-  z-index: 10;
-}
-
-.modal button{
-  height: 30px;
-}
-
-.modal div, .modal h1{
-  padding: 1em 0 0.2em 0;
 }

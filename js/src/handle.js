@@ -82,6 +82,11 @@ var Handle = function (gameObject, displayObject) {
     }
   };
 
+  this.restart = function (gameObject, displayObject) {
+    gameObject.restart();
+    displayObject.init(gameObject);
+  };
+
   this.gameState = function (gameObject, displayObject) {
     // Reset event listeners
     $(window).off();
@@ -94,11 +99,12 @@ var Handle = function (gameObject, displayObject) {
       // Handle welcome screen
       case gameObject.states.START:
         // console.log('Welcome - game state:', gameObject.state);
-        console.log('Press Enter to begin ');
+        displayObject.modal.welcomeShow();
         $(window).keydown(function (event) {
           if (event.key === 'Enter') {
             gameObject.updateState(gameObject.states.PLAYERONE_TURN);
           }
+          displayObject.modal.emptyAndHide();
           handle.gameState(gameObject, displayObject);
         });
         break;
@@ -137,21 +143,47 @@ var Handle = function (gameObject, displayObject) {
         displayObject.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
 
         // Display modal for battle mode selection
-        displayObject.modal.setTitle(gameObject.playerOne.customClass);
-        displayObject.modal.window.fadeIn(200);
+        displayObject.modal.decisionShow(gameObject.playerOne.customClass);
+        // Show opposite player range
+        displayObject.hidePlayerRange(gameObject.playerOne);
+        displayObject.showPlayerRange(gameObject.playerTwo);
 
         // Handle player battle mode selection for ATTACK
+        $(window).keydown(function (event) {
+          if (event.key === 'Enter') {
+            // Set current player battle mode to Attack
+            gameObject.updateState(handle.decision(gameObject, gameObject.playerOne, gameObject.decisions.ATTACK));
+            // Remove modal
+            displayObject.modal.emptyAndHide();
+            // Handle game state
+            handle.gameState(gameObject, displayObject);
+          }
+        });
         displayObject.modal.buttonAttack.on('click', function (event) {
+          // Set current player battle mode to Attack
           gameObject.updateState(handle.decision(gameObject, gameObject.playerOne, gameObject.decisions.ATTACK));
-          displayObject.modal.window.fadeOut(100);
+          // Remove modal
+          displayObject.modal.emptyAndHide();
           // Handle game state
           handle.gameState(gameObject, displayObject);
         });
 
-        // Handle player battle mode selection for DEFEND
+        // Handle player battle mode selection for DEFEND on click and Esc
+        $(window).keydown(function (event) {
+          if (event.key === 'Escape') {
+            // Set current player battle mode to Defend
+            gameObject.updateState(handle.decision(gameObject, gameObject.playerOne, gameObject.decisions.DEFEND));
+            // Remove modal
+            displayObject.modal.emptyAndHide();
+            // Handle game state
+            handle.gameState(gameObject, displayObject);
+          }
+        });
         displayObject.modal.buttonDefend.on('click', function (event) {
+          // Set current player battle mode to Defend
           gameObject.updateState(handle.decision(gameObject, gameObject.playerOne, gameObject.decisions.DEFEND));
-          displayObject.modal.window.fadeOut();
+          // Remove modal
+          displayObject.modal.emptyAndHide();
           // Handle game state
           handle.gameState(gameObject, displayObject);
         });
@@ -163,23 +195,49 @@ var Handle = function (gameObject, displayObject) {
         displayObject.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
 
         // Display modal for battle mode selection
-        displayObject.modal.setTitle(gameObject.playerTwo.customClass);
-        displayObject.modal.window.fadeIn(200);
+        displayObject.modal.decisionShow(gameObject.playerTwo.customClass)
+        // Show opposite player range
+        displayObject.hidePlayerRange(gameObject.playerTwo);
+        displayObject.showPlayerRange(gameObject.playerOne);
 
         // Handle player battle mode selection for ATTACK
         displayObject.modal.buttonAttack.on('click', function (event) {
+          // Set current player battle mode to Attack
           gameObject.updateState(handle.decision(gameObject, gameObject.playerTwo, gameObject.decisions.ATTACK));
-          displayObject.modal.window.fadeOut(100);
+          // Show opposite player range
+          displayObject.modal.emptyAndHide();
           // Handle game state
           handle.gameState(gameObject, displayObject);
+        });
+        $(window).keydown(function (event) {
+          if (event.key === 'Enter') {
+            // Set current player battle mode to Attack
+            gameObject.updateState(handle.decision(gameObject, gameObject.playerTwo, gameObject.decisions.ATTACK));
+            // Show opposite player range
+            displayObject.modal.emptyAndHide();
+            // Handle game state
+            handle.gameState(gameObject, displayObject);
+          }
         });
 
         // Handle player battle mode selection for DEFEND
         displayObject.modal.buttonDefend.on('click', function (event) {
+          // Set current player battle mode to Defend
           gameObject.updateState(handle.decision(gameObject, gameObject.playerTwo, gameObject.decisions.DEFEND));
-          displayObject.modal.window.fadeOut();
+          // Show opposite player range
+          displayObject.modal.emptyAndHide();
           // Handle game state
           handle.gameState(gameObject, displayObject);
+        });
+        $(window).keydown(function (event) {
+          if (event.key === 'Escape') {
+            // Set current player battle mode to Defend
+            gameObject.updateState(handle.decision(gameObject, gameObject.playerTwo, gameObject.decisions.DEFEND));
+            // Show opposite player range
+            displayObject.modal.emptyAndHide();
+            // Handle game state
+            handle.gameState(gameObject, displayObject);
+          }
         });
         break;
 
@@ -187,12 +245,25 @@ var Handle = function (gameObject, displayObject) {
       case gameObject.states.GAMEOVER:
         // Activate player information
         displayObject.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
+        // Player One wins
+        if (gameObject.playerOne.power > 0 && gameObject.playerTwo.power <= 0) {
+          displayObject.modal.gameOverShow(gameObject.playerOne.customClass);
+        // Player Two wins
+        } else if (gameObject.playerOne.power <= 0 && gameObject.playerTwo.power > 0) {
+          displayObject.modal.gameOverShow(gameObject.playerTwo.customClass);
+        // Draw
+        } else if (gameObject.playerOne.power <= 0 && gameObject.playerTwo.power <= 0) {
+          displayObject.modal.gameOverShow(gameObject.playerTwo.customClass);
+        }
 
-        console.log('Press Q to exit program');
         $(window).keydown(function (event) {
           if (event.key === 'q') {
             gameObject.updateState(gameObject.states.QUIT);
+          } else if (event.key === 'Enter') {
+            handle.restart(gameObject, displayObject);
+            gameObject.updateState(gameObject.states.PLAYERONE_TURN);
           }
+          displayObject.modal.emptyAndHide();
           handle.gameState(gameObject, displayObject);
         });
         break;

@@ -1,35 +1,40 @@
 #informations{
-    width: auto;
-    margin: 10px auto;
-    position: relative;
-}
-
-#informations{
-  width: 600px;
-}
-
-#informations .player, #informations .turn{
+  width: 150px;
+  height: 600px;
+  position: relative;
+  color: white;
+  margin-left: 20px;
   display: inline-block;
-  text-align: center;
+  vertical-align: top;
 }
 
-#informations .player{
-  width: 45%;
+#informations .player, #informations .turn, #informations .buttons, #informations .instruction{
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+#informations .player:first-of-type{
+  border: 3px solid red;
+}
+#informations .player:nth-of-type(0n+2){
+  border: 3px solid green;
 }
 
 #informations .player:first-of-type.active{
   background-color: rgba(244, 7, 7, 0.57);
 }
 
-#informations .player:last-of-type.active{
+#informations .player:nth-of-type(0n+2).active{
   background-color: rgba(7, 244, 31, 0.57);
 }
 
-#informations .turn{
-  width: 10%;
+#informations .power, #informations .weapon{
+  padding: 3px 5px;
 }
 
-#informations .power, #informations .weapon{
-  display: inline-block;
-  padding: 3px 5px;
+#informations .player .title{
+  font-size: 2em;
 }

@@ -24,7 +24,7 @@ var Display = function () {
     // Display board
     this.showBoard(this.board);
     // Activate player information
-    this.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
+    this.generateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
 
     // Display players
     this.showPlayer(gameObject.playerOne);
@@ -66,7 +66,9 @@ var Display = function () {
   this.showBoard = function (elementHTML) {
     // Find #board element
     var boardHTML = $('#board');
+    // Empty Board
     boardHTML.html('');
+    // Append elementHTML
     boardHTML.append(elementHTML);
   };
 
@@ -189,7 +191,7 @@ var Display = function () {
 
   // Animate every step using array of step directions and lenghts
   this.animateSteps = function (gameObject, player, animatedElement, animationStyles, index) {
-    // If index reached path length
+    // If animation finished - index reached path length
     if (index >= animationStyles.length) {
       // Remove animation element from DOM
       animatedElement.remove();
@@ -255,7 +257,7 @@ var Display = function () {
     // If path is equal to one step (player is not moving in any direction)
     } else {
       this.showPlayer(player);
-      this.showPlayerRange(player);
+      this.showPlayerRange(gameObject.getOpponnent(player));
     }
   };
 
@@ -299,33 +301,52 @@ var Display = function () {
   };
 
   // Display updated players and game info
-  this.updateGameInformation = function (playerOne, playerTwo, gameObject) {
+  this.generateGameInformation = function (playerOne, playerTwo, gameObject) {
+    // Find and empty #information element
     var information = $('#informations').html('');
-    var plOne = $('<div>').addClass('player');
-    var playerOneName = $('<div>').addClass('playerName').text('Player One');
+
+    this.playerOneSection = $('<div>').addClass('player');
+    var playerOneName = $('<div>').addClass('title').text('P1');
     var playerOnePowerLabel = $('<div>').addClass('power').text('Power: ');
-    var playerOnePower = $('<div>').addClass('power').text(playerOne.power);
+    this.playerOnePower = $('<div>').addClass('power').text(playerOne.power);
     var playerOneWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    var playerOneWeapon = $('<div>').addClass('weapon').text(-playerOne.weapon.damage * 100 + '%');
+    this.playerOneWeapon = $('<div>').addClass('weapon').text(-playerOne.weapon.damage * 100 + '%');
 
-    var turn = $('<div>').addClass('turn').text(gameObject.urnCounter);
+    this.playerTwoSection = $('<div>').addClass('player');
+    var playerTwoName = $('<div>').addClass('title').text('P2');
+    var playerTwoPowerLabel = $('<div>').addClass('power label').text('Power:');
+    this.playerTwoPower = $('<div>').addClass('power').text(playerTwo.power);
+    var playerTwoWeaponLabel = $('<div>').addClass('weapon label').text('Weapon:');
+    this.playerTwoWeapon = $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
 
-    var plTwo = $('<div>').addClass('player');
-    var playerTwoName = $('<div>').addClass('playerName').text('Player Two');
-    var playerTwoPowerLabel = $('<div>').addClass('power').text('Power:');
-    var playerTwoPower = $('<div>').addClass('power').text(playerTwo.power);
-    var playerTwoWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    var playerTwoWeapon = $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
+    this.turn = $('<div>').addClass('turn').text('Turn: ' + gameObject.turnCounter);
 
-    this.toggleActive(plOne, plTwo, gameObject);
+    this.buttonRestart = $('<div>').addClass('button restart').text('Restart');
+    this.buttonQuit = $('<div>').addClass('button quit').text('Quit');
+    var buttons = $('<div>').addClass('buttons');
+
+    var instruction = $('<div>').addClass('instruction').html('<p>Press (<kbd>Arrows</kbd>) </br>to move spider.</p><p>Press (<kbd>Enter</kbd>)</br>to end player turn.</p>');
 
     information
-      .append(plOne.append(playerOneName).append(playerOnePowerLabel).append(playerOnePower).append(playerOneWeaponLabel).append(playerOneWeapon))
-      .append(turn)
-      .append(plTwo.append(playerTwoName).append(playerTwoPowerLabel).append(playerTwoPower).append(playerTwoWeaponLabel).append(playerTwoWeapon));
+      .append(this.playerOneSection.append(playerOneName).append(playerOnePowerLabel).append(this.playerOnePower).append(playerOneWeaponLabel).append(this.playerOneWeapon))
+      .append(this.playerTwoSection.append(playerTwoName).append(playerTwoPowerLabel).append(this.playerTwoPower).append(playerTwoWeaponLabel).append(this.playerTwoWeapon))
+      .append(this.turn)
+      .append(buttons.append(this.buttonRestart).append(this.buttonQuit))
+      .append(instruction);
+  };
+
+  this.updateGameInformation = function (playerOne, playerTwo, gameObject) {
+    this.playerOnePower.text(playerOne.power);
+    this.playerOneWeapon.text(-playerOne.weapon.damage * 100 + '%');
+
+    this.playerTwoPower.text(playerTwo.power);
+    this.playerTwoWeapon.text(-playerTwo.weapon.damage * 100 + '%');
+
+    this.turn.text('Turn: ' + gameObject.turnCounter);
+
+    this.toggleActive(this.playerOneSection, this.playerTwoSection, gameObject);
   };
 };
-
 
 // ----------------------- Helper functions --------------------
 
@@ -347,22 +368,85 @@ var removeClassName = function (coordinates, customClass) {
   }
 };
 
-// Modal window for battle mode desicion
+// Modal window for game states and battle mode desicions
 var Modal = function () {
-  // Define buttons attack and defend
-  this.buttonAttack = $('<button>').addClass('button attack').text('Attack'.toUpperCase());
-  this.buttonDefend = $('<button>').addClass('button defend').text('Defend'.toUpperCase());
+  // Define modal main element
+  this.window = $('<div id="decision">').addClass('modal');
   // Define title
   this.titleText = $('<h1>').addClass('title');
   // Define modal prompt
-  this.desicionPrompt = $('<div>').addClass('prompt').text('Select battle mode');
-  // Define modal window
-  this.window = $('<div id="decision">');
-  // Fill modal window with content
-  this.window.addClass('modal').append(this.titleText).append(this.desicionPrompt).append(this.buttonAttack).append(this.buttonDefend);
+  this.modalPrompt = $('<div>').addClass('prompt')
+  // Define attack and defend buttons
+  this.buttonAttack = $('<div>').addClass('button attack').html('Attack (<kbd>Enter</kbd>)');
+  this.buttonDefend = $('<div>').addClass('button defend').html('Defend (<kbd>Esc</kbd>)');
+
+  // Show modal for player battle mode decision
+  this.decisionShow = function (playerClass) {
+    // Update title
+    this.titleText.text(this.getPlayerTitle(playerClass));
+    // Define modal prompt
+    this.modalPrompt.text('Select battle mode');
+    // Fill modal window with content
+    this.window.append(this.titleText).append(this.modalPrompt).append(this.buttonAttack).append(this.buttonDefend);
+    // Show modal window
+    this.window.fadeIn(200);
+  };
+
+  // Show modal for start game
+  this.welcomeShow = function () {
+    // Update title
+    this.titleText.text('Welcome');
+    // Define modal prompt
+    this.modalPrompt.append('<p>To move spider use (<kbd>Arrows</kbd>).</br>To end player turn press (<kbd>Enter</kbd>).</p><p><strong>To begin press (<kbd>Enter</kbd>)</strong></p>');
+    // Fill modal window with content
+    this.window.append(this.titleText).append(this.modalPrompt);
+    // Show modal window
+    this.window.fadeIn(200);
+  };
+
+  // Show modal for game over
+  this.gameOverShow = function (param) {
+    switch (param) {
+      case 'playerOne':
+        this.modalPrompt.append($('<p>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        break;
+      case 'playerTwo':
+        this.modalPrompt.append($('<p>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        break;
+      case 'draw':
+        this.modalPrompt.append($('<p>').text('We have DRAW'));
+        break;
+      case '':
+        this.modalPrompt.append($('<p>').text('Game interrupted by user'));
+        break;
+      default:
+    }
+    // Update title
+    this.titleText.text('Game Over');
+    // Default modal prompt
+    this.modalPrompt.append($('<p>Press (<kbd>Enter</kbd>) to restart game</p>'));
+    // Fill modal window with content
+    this.window.append(this.titleText).append(this.modalPrompt);
+    // Show modal window
+    this.window.fadeIn(200);
+  };
+
+  // Empty and hide modal window
+  this.emptyAndHide = function () {
+    // Empty modal window
+    this.window.html('');
+    this.titleText.html('');
+    this.modalPrompt.html('');
+    // Hide modal window
+    this.window.fadeOut(100);
+  };
 
   // Function for setting title text content
-  this.setTitle = function (text) {
-    this.titleText.text(text);
+  this.getPlayerTitle = function (playerClass) {
+    if (playerClass === 'playerOne') {
+      return 'P1';
+    } else if (playerClass === 'playerTwo') {
+      return 'P2';
+    }
   };
 };

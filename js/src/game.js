@@ -330,6 +330,10 @@
       this.battleModeState = this.battleModeStates.OFF;
     };
 
+    this.restart = function () {
+      this.init(this.board.length, this.playerOne.rangeLimit, this.initialPower, this.defaultWeapon.damage, this.obstacles.length, this.weapons.length);
+    };
+
     // Get opponent
     this.getOpponnent = function (player) {
       return (player === this.playerOne) ? this.playerTwo : this.playerOne;

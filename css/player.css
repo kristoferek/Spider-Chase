@@ -1,3 +1,14 @@
+
+.playerOne .background, .playerTwo .background{
+  background-color: rgba(255,255,255,0.5);
+  /*border-radius: 50%;*/
+}
+.playerOne .object, .playerOne .moving{
+  background-image: url('../img/spider_red.png');
+}
+.playerTwo .object, .playerTwo .moving{
+  background-image: url('../img/spider_green.png');
+}
 .playerOne .object, .playerTwo .object{
   background-position: -35px -50px;
   z-index: 2;
@@ -10,63 +21,58 @@
   background-position: -15px -30px;
   z-index: 2;
 }
-
-.playerOne .background, .playerTwo .background{
-  background-color: rgba(255,255,255,0.5);
-  /*border-radius: 50%;*/
-}
-
 /* ---------------------------   Sprites ----------------- */
 /* Sprites are pictures of spiders of size 128 x 128px */
 /*   moved initialy 15px to the left and 30px up to center ant on .filed */
 
-.playerOne .object, .playerOne .moving{
-  background-image: url('../img/spider_red.png');
-}
-.playerTwo .object, .playerTwo .moving{
-  background-image: url('../img/spider_green.png');
-}
 
 /* --- While standing --- */
 
 /* Spider stands and looks to the TOP */
 @-webkit-keyframes steady-top{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -2) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -2) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
 }
 @keyframes steady-top{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -2) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -2) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -2) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -2) - 50px); }
 }
 
 /* Spider stands and looks on RIGHT */
 @-webkit-keyframes steady-right{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -4) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -4) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
 }
 @keyframes steady-right{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -4) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -4) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -4) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -4) - 50px); }
 }
 
 /* Spider stands and looks on BOTTOM */
 @-webkit-keyframes steady-bottom{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -6) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -6) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
 }
 @keyframes steady-bottom{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * -6) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * -6) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * -6) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * -6) - 50px); }
 }
 
 /* Spider stands and looks to the LEFT */
 @-webkit-keyframes steady-left{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * 0) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * 0) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
 }
 @keyframes steady-left{
-  from { background-position: calc(calc(128px * -0) - 15px) calc(calc(128px * 0) - 30px); }
-  to { background-position: calc(calc(128px * -4) - 15px) calc(calc(128px * 0) - 30px); }
+  from { background-position: calc(calc(128px * -0) - 35px) calc(calc(128px * 0) - 50px); }
+  to { background-position: calc(calc(128px * -4) - 35px) calc(calc(128px * 0) - 50px); }
+}
+
+.playerOne .object, .playerTwo .object{
+  animation: steady-left 0.5s steps(4) infinite;
+}
+.playerTwo .object{
+  animation: steady-right 0.5s steps(4) infinite;
 }
 
 /* --- While moving --- */
