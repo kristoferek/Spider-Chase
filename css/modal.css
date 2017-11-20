@@ -2,19 +2,93 @@
 .modal{
   position: absolute;
   width: 80%;
-  height: 50%;
+  height: 40%;
   background: rgba(255, 255, 255, 0.8);
   left: 10%;
   top: 10%;
+  padding: 15px;
   border-radius: 10px;
   text-align: center;
+  box-shadow: 2px 3px 15px rgba(10,10,10,0.4);
   z-index: 10;
 }
 
-.modal button{
-  height: 30px;
+.modal .title{
+  font-family: 'Special Elite', Times, serif;
+  font-weight: 700;
+  font-size: 3em;
 }
 
-.modal div, .modal h1{
-  padding: 1em 0 0.2em 0;
+.modal div{
+  padding: 12px 15px;
+}
+
+.modal .button{
+  height: 20px;
+  width: 50%;
+  padding: 10px 15px;
+  margin: 0 auto 15px auto;
+  background-color: rgba(255,255,255,0.8);
+  border: 3px solid rgba(200,200,200,0.8);
+  border-radius: 3px;
+  font-size: 20px;
+  position: relative;
+  text-indent: 25px;
+  line-height: 20px;
+  box-shadow: 2px 3px 5px rgba(10,10,10,0.4);
+}
+
+@-webkit-keyframes buttonAnimation {
+  from {
+    background-color: rgb(255,255,255,0.8);
+    border: 3px solid rgba(200,200,200,0.8);
+    box-shadow: 2px 3px 5px rgba(10,10,10,0.4);
+  }
+  to {
+    top: 1px;
+    background-color: rgba(240,240,240,0.9);
+    border: 3px solid rgba(200,200,200,0.9);
+    box-shadow: 1px 2px 3px rgba(10,10,10,0.6);
+  }
+}
+
+@keyframes buttonAnimation {
+  from {
+    background-color: rgb(255,255,255,0.8);
+    border: 3px solid rgba(200,200,200,0.8);
+    box-shadow: 2px 3px 5px rgba(10,10,10,0.4);
+  }
+  to {
+    top: 1px;
+    background-color: rgba(240,240,240,0.9);
+    border: 3px solid rgba(200,200,200,0.9);
+    box-shadow: 1px 2px 3px rgba(10,10,10,0.6);
+  }
+}
+.modal .button:hover{
+  top: 1px;
+  background-color: rgba(240,240,240,0.8);
+  border: 3px solid rgba(200,200,200,0.9);
+  box-shadow: 1px 2px 3px rgba(10,10,10,0.6);
+  -webkit-animation: buttonAnimation 0.2s ease;
+          animation: buttonAnimation 0.2s ease;
+}
+
+.modal .button.attack:before{
+  background-image: url('../img/icon_attack.png');
+}
+
+.modal .button.defend:before{
+  background-image: url('../img/icon_defend.png');
+}
+
+.modal .button.attack:before, .modal .button.defend:before{
+  position: absolute;
+  left: 20px;
+  top: 4px;
+  width: 34px;
+  height: 34px;
+  background-size: 32px;
+  background-repeat: no-repeat;
+  content: '';
 }

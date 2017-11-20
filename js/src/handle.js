@@ -93,18 +93,34 @@ var Handle = function (gameObject, displayObject) {
     displayObject.modal.buttonAttack.off('click');
     displayObject.modal.buttonDefend.off('click');
 
+    // Add global listeners for Restart game button
+    displayObject.buttonRestart.on('click', function () {
+      // Reinitialize game and display objects
+      handle.restart(gameObject, displayObject);
+      // Start game with player One turn
+      gameObject.updateState(gameObject.states.START);
+      // Hide modal window
+      displayObject.modal.emptyAndHide();
+      // Handle game state
+      handle.gameState(gameObject, displayObject);
+    });
+
     var handle = this;
 
     switch (gameObject.state) {
       // Handle welcome screen
       case gameObject.states.START:
-        // console.log('Welcome - game state:', gameObject.state);
+        // Display wecome modal
         displayObject.modal.welcomeShow();
+        // When Enter pressed
         $(window).keydown(function (event) {
           if (event.key === 'Enter') {
+            // Start with player one turn
             gameObject.updateState(gameObject.states.PLAYERONE_TURN);
           }
+          // hide modal window
           displayObject.modal.emptyAndHide();
+          // Handle game state
           handle.gameState(gameObject, displayObject);
         });
         break;
@@ -257,20 +273,13 @@ var Handle = function (gameObject, displayObject) {
         }
 
         $(window).keydown(function (event) {
-          if (event.key === 'q') {
-            gameObject.updateState(gameObject.states.QUIT);
-          } else if (event.key === 'Enter') {
+          if (event.key === 'Enter') {
             handle.restart(gameObject, displayObject);
             gameObject.updateState(gameObject.states.PLAYERONE_TURN);
           }
           displayObject.modal.emptyAndHide();
           handle.gameState(gameObject, displayObject);
         });
-        break;
-
-      // Handle Quit gamwe
-      case 6:
-        console.log('Game Exit - game state:', gameObject.state);
         break;
       default:
     }

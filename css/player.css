@@ -11,7 +11,7 @@
 }
 .playerOne .object, .playerTwo .object{
   background-position: -35px -50px;
-  z-index: 2;
+  z-index: 10;
 }
 .playerOne .moving, .playerTwo .moving{
   width: 98px;
@@ -19,7 +19,7 @@
   left: -20px;
   top: -20px;
   background-position: -15px -30px;
-  z-index: 2;
+  z-index: 11;
 }
 /* ---------------------------   Sprites ----------------- */
 /* Sprites are pictures of spiders of size 128 x 128px */
@@ -69,10 +69,12 @@
 }
 
 .playerOne .object, .playerTwo .object{
-  animation: steady-left 0.5s steps(4) infinite;
+  -webkit-animation: steady-left 0.5s steps(4) infinite;
+          animation: steady-left 0.5s steps(4) infinite;
 }
 .playerTwo .object{
-  animation: steady-right 0.5s steps(4) infinite;
+  -webkit-animation: steady-right 0.5s steps(4) infinite;
+          animation: steady-right 0.5s steps(4) infinite;
 }
 
 /* --- While moving --- */

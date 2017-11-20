@@ -1,5 +1,5 @@
 #informations{
-  width: 150px;
+  width: 120px;
   height: 600px;
   position: relative;
   color: white;
@@ -8,33 +8,66 @@
   vertical-align: top;
 }
 
-#informations .player, #informations .turn, #informations .buttons, #informations .instruction{
-  border-radius: 10px;
-  margin-bottom: 10px;
-  padding: 4px;
-  text-align: center;
+#informations .player, #informations .turn, #informations .button, #informations .instruction{
   width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 4px;
+  text-align: center;
+  border: 3px solid rgba(200,200,200,0.8);
+  border-radius: 3px;
 }
 
-#informations .player:first-of-type{
-  border: 3px solid red;
-}
-#informations .player:nth-of-type(0n+2){
-  border: 3px solid green;
+#informations .player, #informations .turn, #informations .button, #informations .instruction, #informations kbd{
+  font-family: 'Amatic SC', Helvetica, sans-serif;
 }
 
 #informations .player:first-of-type.active{
-  background-color: rgba(244, 7, 7, 0.57);
+  border: 3px solid red;
+  background-color: rgba(244, 7, 7, 0.2);
 }
 
 #informations .player:nth-of-type(0n+2).active{
-  background-color: rgba(7, 244, 31, 0.57);
-}
-
-#informations .power, #informations .weapon{
-  padding: 3px 5px;
+  border: 3px solid green;
+  background-color: rgba(7, 244, 31, 0.2);
 }
 
 #informations .player .title{
+  font-family: 'Special Elite', Times, serif;
+  font-weight: 700;
   font-size: 2em;
+}
+
+#information .player .power.label, #information .player .weapon.label{
+  font-weight: 400;
+  font-size: 1em;
+}
+
+#informations .power.value, #informations .weapon.value{
+  font-weight: 700;
+  font-size: 1.4em;
+}
+
+#informations .power.value{
+  margin-bottom: 8px;
+}
+
+#informations .instruction div:first-of-type{
+  margin-bottom: 8px;
+}
+
+#informations .instruction div kbd{
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+#informations .button{
+  background-color: rgba(200,200,200,0.2);
+  font-weight: 700;
+  font-size: 1.2em;
+}
+
+#informations .button:hover{
+  background-color: rgba(200,200,200,0.4);
+  box-shadow: 0 0 5px rgba(10,10,10,0.8) inset;
+  text-shadow: 0 0 10px rgba(10,10,10,0.8);
 }

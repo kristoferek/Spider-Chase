@@ -5,15 +5,19 @@
 @import "./player.css";
 @import "./modal.css";
 
+@import url('https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Oxygen:400,700|Special+Elite');
+
 body {
   background-color: rgba(200,200,200,0.1);
   background-image: url('../img/concrete.jpg');
   background-position: center;
   background-size: cover;
+  font-family: Oxygen, Helvetica, sans-serif;
+  box-sizing: border-box;
 }
 
 .container{
   width: 100%;
-  margin: calc(calc(100vh - 600px) / 2) auto;
+  margin: calc(calc(100vh - 600px) / 2) auto 0 auto;
   text-align: center;
 }

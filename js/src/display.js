@@ -307,40 +307,39 @@ var Display = function () {
 
     this.playerOneSection = $('<div>').addClass('player');
     var playerOneName = $('<div>').addClass('title').text('P1');
-    var playerOnePowerLabel = $('<div>').addClass('power').text('Power: ');
-    this.playerOnePower = $('<div>').addClass('power').text(playerOne.power);
-    var playerOneWeaponLabel = $('<div>').addClass('weapon').text('Weapon:');
-    this.playerOneWeapon = $('<div>').addClass('weapon').text(-playerOne.weapon.damage * 100 + '%');
+    var playerOnePowerLabel = $('<div>').addClass('power').addClass('label').addClass('label').text('Power: ');
+    this.playerOnePower = $('<div>').addClass('power').addClass('value').text(playerOne.power + ' points');
+    var playerOneWeaponLabel = $('<div>').addClass('weapon').addClass('label').text('Weapon:');
+    this.playerOneWeapon = $('<div>').addClass('weapon').addClass('value').text(-playerOne.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' points');
 
     this.playerTwoSection = $('<div>').addClass('player');
     var playerTwoName = $('<div>').addClass('title').text('P2');
-    var playerTwoPowerLabel = $('<div>').addClass('power label').text('Power:');
-    this.playerTwoPower = $('<div>').addClass('power').text(playerTwo.power);
-    var playerTwoWeaponLabel = $('<div>').addClass('weapon label').text('Weapon:');
-    this.playerTwoWeapon = $('<div>').addClass('weapon').text(-playerTwo.weapon.damage * 100 + '%');
+    var playerTwoPowerLabel = $('<div>').addClass('power').addClass('label').text('Power:');
+    this.playerTwoPower = $('<div>').addClass('power').addClass('value').text(playerTwo.power + ' points');
+    var playerTwoWeaponLabel = $('<div>').addClass('weapon').addClass('label').text('Weapon:');
+    this.playerTwoWeapon = $('<div>').addClass('weapon').addClass('value').text(-playerTwo.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' point');
 
     this.turn = $('<div>').addClass('turn').text('Turn: ' + gameObject.turnCounter);
 
-    this.buttonRestart = $('<div>').addClass('button restart').text('Restart');
-    this.buttonQuit = $('<div>').addClass('button quit').text('Quit');
-    var buttons = $('<div>').addClass('buttons');
+    var instruction = $('<div>').addClass('instruction').html('<div>Press (<kbd>Arrows</kbd>) </br>to move spider.</div><div>Press (<kbd>Enter</kbd>)</br>to end player turn.</div>');
 
-    var instruction = $('<div>').addClass('instruction').html('<p>Press (<kbd>Arrows</kbd>) </br>to move spider.</p><p>Press (<kbd>Enter</kbd>)</br>to end player turn.</p>');
+    this.buttonRestart = $('<div>').addClass('button restart').text('Restart');
+    var buttons = $('<div>').addClass('buttons');
 
     information
       .append(this.playerOneSection.append(playerOneName).append(playerOnePowerLabel).append(this.playerOnePower).append(playerOneWeaponLabel).append(this.playerOneWeapon))
       .append(this.playerTwoSection.append(playerTwoName).append(playerTwoPowerLabel).append(this.playerTwoPower).append(playerTwoWeaponLabel).append(this.playerTwoWeapon))
       .append(this.turn)
-      .append(buttons.append(this.buttonRestart).append(this.buttonQuit))
-      .append(instruction);
+      .append(instruction)
+      .append(this.buttonRestart);
   };
 
   this.updateGameInformation = function (playerOne, playerTwo, gameObject) {
-    this.playerOnePower.text(playerOne.power);
-    this.playerOneWeapon.text(-playerOne.weapon.damage * 100 + '%');
+    this.playerOnePower.text(playerOne.power + ' points');
+    this.playerOneWeapon.text(-playerOne.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' points');
 
-    this.playerTwoPower.text(playerTwo.power);
-    this.playerTwoWeapon.text(-playerTwo.weapon.damage * 100 + '%');
+    this.playerTwoPower.text(playerTwo.power + ' points');
+    this.playerTwoWeapon.text(-playerTwo.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' points');
 
     this.turn.text('Turn: ' + gameObject.turnCounter);
 
@@ -373,7 +372,7 @@ var Modal = function () {
   // Define modal main element
   this.window = $('<div id="decision">').addClass('modal');
   // Define title
-  this.titleText = $('<h1>').addClass('title');
+  this.titleText = $('<div>').addClass('title');
   // Define modal prompt
   this.modalPrompt = $('<div>').addClass('prompt')
   // Define attack and defend buttons
@@ -388,6 +387,12 @@ var Modal = function () {
     this.modalPrompt.text('Select battle mode');
     // Fill modal window with content
     this.window.append(this.titleText).append(this.modalPrompt).append(this.buttonAttack).append(this.buttonDefend);
+    // Set backgroud color
+    if (playerClass === 'playerOne') {
+      this.window.css('background-color', 'rgba(255, 180, 180, 0.6)');
+    } else if (playerClass === 'playerTwo') {
+      this.window.css('background-color', 'rgba(180, 244, 180, 0.6)');
+    }
     // Show modal window
     this.window.fadeIn(200);
   };
@@ -397,7 +402,7 @@ var Modal = function () {
     // Update title
     this.titleText.text('Welcome');
     // Define modal prompt
-    this.modalPrompt.append('<p>To move spider use (<kbd>Arrows</kbd>).</br>To end player turn press (<kbd>Enter</kbd>).</p><p><strong>To begin press (<kbd>Enter</kbd>)</strong></p>');
+    this.modalPrompt.append('<div>To move spider use (<kbd>Arrows</kbd>).</br>To end player turn press (<kbd>Enter</kbd>).</div><div><strong>To begin press (<kbd>Enter</kbd>)</strong></div>');
     // Fill modal window with content
     this.window.append(this.titleText).append(this.modalPrompt);
     // Show modal window
@@ -408,23 +413,23 @@ var Modal = function () {
   this.gameOverShow = function (param) {
     switch (param) {
       case 'playerOne':
-        this.modalPrompt.append($('<p>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
         break;
       case 'playerTwo':
-        this.modalPrompt.append($('<p>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
         break;
       case 'draw':
-        this.modalPrompt.append($('<p>').text('We have DRAW'));
+        this.modalPrompt.append($('<div>').text('We have DRAW'));
         break;
       case '':
-        this.modalPrompt.append($('<p>').text('Game interrupted by user'));
+        this.modalPrompt.append($('<div>').text('Game interrupted by user'));
         break;
       default:
     }
     // Update title
     this.titleText.text('Game Over');
     // Default modal prompt
-    this.modalPrompt.append($('<p>Press (<kbd>Enter</kbd>) to restart game</p>'));
+    this.modalPrompt.append($('<div>Press (<kbd>Enter</kbd>) to restart game</div>'));
     // Fill modal window with content
     this.window.append(this.titleText).append(this.modalPrompt);
     // Show modal window

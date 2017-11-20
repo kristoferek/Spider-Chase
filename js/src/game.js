@@ -309,8 +309,7 @@
         PLAYERTWO_TURN: 2,
         PLAYERONE_BATTLEMODE: 3,
         PLAYERTWO_BATTLEMODE: 4,
-        GAMEOVER: 5,
-        QUIT: 6
+        GAMEOVER: 5
       };
       // Define battle states
       this.battleModeStates = {
