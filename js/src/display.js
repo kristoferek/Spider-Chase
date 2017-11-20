@@ -414,18 +414,23 @@ var Modal = function () {
     switch (param) {
       case 'playerOne':
         this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        this.window.css('background-color', 'rgba(255, 180, 180, 0.6)');
         break;
       case 'playerTwo':
         this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+        this.window.css('background-color', 'rgba(180, 244, 180, 0.6)');
         break;
       case 'draw':
         this.modalPrompt.append($('<div>').text('We have DRAW'));
+        this.window.css('background-color', 'white');
         break;
       case '':
         this.modalPrompt.append($('<div>').text('Game interrupted by user'));
+        this.window.css('background-color', 'white');
         break;
       default:
     }
+
     // Update title
     this.titleText.text('Game Over');
     // Default modal prompt
