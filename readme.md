@@ -4,6 +4,8 @@
 It is a simple **game** where two spiders walk on the square board consisting of empty fields, fields with weapon and fields with obstacles (they can't step on these).
 Game was design with only one external library - jQuery.
 
+[Spider Chase online](https://kristoferek.github.io/Spider-Chase/) - see how it works
+
 ## Game logic
 Javascript code is organizad on following layers:
 1. **Game.js** includes
