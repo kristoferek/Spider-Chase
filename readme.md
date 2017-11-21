@@ -27,7 +27,9 @@ Styling bases on css classes which are organized according to game objects or di
 * **weapon.css** - defines classes for different weapons
 * **player.css** - defines classes for player and animation for player actions - movement in different directions, staying, attacking, defending
 * **modal.css** - defeines classes for modal window
+* **title.css** - defeines classes for game title
 * **information.css** - defines classes for information section aside the board
+* **copyright.css** - defeines classes for copyrioght information
 
 ## Technological stack
 I used small Toshiba laptop with:
