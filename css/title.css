@@ -1,0 +1,47 @@
+#gameTitle {
+  height: 606px;
+  width: 60px;
+  position: relative;
+  color: white;
+  margin-right: 20px;
+  display: inline-block;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+#gameTitle div{
+  height: 64px;
+  width: 606px;
+  /*background-color: rgba(191, 188, 191, 0.2);*/
+
+  font-family: 'Oxygen', Helvetica, sans-serif;
+  font-size: 64px;
+  line-height: 64px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: right;
+
+  transform-origin: 300px 300px;
+  transform: rotate(-90deg);
+
+  color: rgba(0,0,0, 0.1);
+  text-stroke: 1px rgba(white, 0.6);
+  -webkit-text-stroke: 1px rgba(200,200,200,0.6);
+	/*text-shadow:
+		-1px -1px 0 rgb(136, 136, 136),
+		1px -1px 0 rgb(200,200,200),
+		-1px 1px 0 rgb(136, 136, 136),
+		1px 1px 0 rgb(200,200,200);*/
+}
+
+#gameTitle div:before{
+  position: absolute;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  transform: rotate(90deg);
+  background-image: url('../img/spider_title.png');
+  background-position: bottom right;
+
+  /*opacity: 0.7;*/
+  content: '';

@@ -1,8 +1,10 @@
 @import "./normalize.css";
+@import "./title.css";
 @import "./board.css";
 @import "./information.css";
 @import "./weapon.css";
 @import "./player.css";
+@import "./copyright.css";
 @import "./modal.css";
 
 @import url('https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Oxygen:400,700|Special+Elite');

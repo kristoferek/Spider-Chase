@@ -21,6 +21,8 @@ var Display = function () {
     // Create HTML board and display on page
     this.board = this.generateBoard(gameObject.board.fields, gameObject.obstacles);
 
+    // Display Game Title
+    this.showGameTitle('Spider Chase')
     // Display board
     this.showBoard(this.board);
     // Activate player information
@@ -34,6 +36,8 @@ var Display = function () {
     // Display weapons
     this.showWeapons(gameObject.weapons);
 
+    // Display Copyright note
+    this.showCopyright('Christopher Nowak', 'http://github.com/kristoferek');
     // Mount and hide decision modal window
     this.modal = new Modal();
     this.board.append(this.modal.window.hide());
@@ -285,7 +289,7 @@ var Display = function () {
     this.showWeapons(gameObject.weapons);
   };
 
-// ----------------------------- information block ------------------
+// ----------------------- Information block ------------------
 
   // Set active class for player information block
   this.toggleActive = function (elOne, elTwo, gameObject) {
@@ -350,6 +354,19 @@ var Display = function () {
     this.turn.text('Turn: ' + gameObject.turnCounter);
 
     this.toggleActive(this.playerOneSection, this.playerTwoSection, gameObject);
+  };
+
+  // ----------------------- Game title block --------------------
+  this.showGameTitle = function (title) {
+    this.gameTitle = $('#gameTitle');
+    this.gameTitle.html('').append($('<div>').text(title));
+  };
+  // ----------------------- Copyright title block --------------------
+  this.showCopyright = function (name, address) {
+    var cpExist = $('.copyright');
+    if (cpExist.length === 0) {
+      $('#board').append($('<div id="copyright">').html('&copy Copyright <a href="' + address + '" alt="Chris on github.com">' + name + '</a>'));
+    }
   };
 };
 

@@ -1,0 +1,12 @@
+#copyright{
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  font-size: 0.8em;
+  color: grey;
+}
+
+#copyright a, #copyright a:visited, #copyright a:active{
+  color: white;
+  text-decoration: none;
+}
