@@ -290,11 +290,17 @@ var Display = function () {
   // Set active class for player information block
   this.toggleActive = function (elOne, elTwo, gameObject) {
     if (gameObject.state > gameObject.states.START) {
+      // Player One turn or battle mode selection
       if (gameObject.state === gameObject.states.PLAYERONE_TURN || gameObject.state === gameObject.states.PLAYERONE_BATTLEMODE) {
         elOne.addClass('active');
         elTwo.removeClass('active');
+      // Player Two turn or battle mode selection
       } else if (gameObject.state === gameObject.states.PLAYERTWO_TURN || gameObject.state === gameObject.states.PLAYERTWO_BATTLEMODE) {
         elTwo.addClass('active');
+        elOne.removeClass('active');
+      // Remove both active player section background color
+      } else {
+        elTwo.removeClass('active');
         elOne.removeClass('active');
       }
     }
@@ -308,16 +314,16 @@ var Display = function () {
     this.playerOneSection = $('<div>').addClass('player');
     var playerOneName = $('<div>').addClass('title').text('P1');
     var playerOnePowerLabel = $('<div>').addClass('power').addClass('label').addClass('label').text('Power: ');
-    this.playerOnePower = $('<div>').addClass('power').addClass('value').text(playerOne.power + ' points');
+    this.playerOnePower = $('<div>').addClass('power').addClass('value').html(playerOne.power + ' <span class="unit">points<span>');
     var playerOneWeaponLabel = $('<div>').addClass('weapon').addClass('label').text('Weapon:');
-    this.playerOneWeapon = $('<div>').addClass('weapon').addClass('value').text(-playerOne.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' points');
+    this.playerOneWeapon = $('<div>').addClass('weapon').addClass('value').html(-playerOne.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' <span class="unit">points<span>');
 
     this.playerTwoSection = $('<div>').addClass('player');
     var playerTwoName = $('<div>').addClass('title').text('P2');
     var playerTwoPowerLabel = $('<div>').addClass('power').addClass('label').text('Power:');
-    this.playerTwoPower = $('<div>').addClass('power').addClass('value').text(playerTwo.power + ' points');
+    this.playerTwoPower = $('<div>').addClass('power').addClass('value').html(playerTwo.power + ' <span class="unit">points<span>');
     var playerTwoWeaponLabel = $('<div>').addClass('weapon').addClass('label').text('Weapon:');
-    this.playerTwoWeapon = $('<div>').addClass('weapon').addClass('value').text(-playerTwo.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' point');
+    this.playerTwoWeapon = $('<div>').addClass('weapon').addClass('value').html(-playerTwo.weapon.damage * gameObject.defaultWeapon.damage * 10 + ' <span class="unit">points<span>');
 
     this.turn = $('<div>').addClass('turn').text('Turn: ' + gameObject.turnCounter);
 
@@ -410,27 +416,26 @@ var Modal = function () {
   };
 
   // Show modal for game over
-  this.gameOverShow = function (param) {
+  this.gameOverShow = function (param, gameOverStates, displayObject) {
     switch (param) {
-      case 'playerOne':
-        this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+      case gameOverStates.PLAYERONE_WINS:
+        this.modalPrompt.append($('<div>').addClass('title').css('color', 'red').text('Player ' + this.getPlayerTitle(param) + ' wins!'));
         this.window.css('background-color', 'rgba(255, 180, 180, 0.6)');
         break;
-      case 'playerTwo':
-        this.modalPrompt.append($('<div>').text('Player ' + this.getPlayerTitle(param) + ' won!'));
+      case gameOverStates.PLAYERTWO_WINS:
+        this.modalPrompt.append($('<div>').addClass('title').css('color', 'green').text('Player ' + this.getPlayerTitle(param) + ' wins!'));
         this.window.css('background-color', 'rgba(180, 244, 180, 0.6)');
         break;
-      case 'draw':
-        this.modalPrompt.append($('<div>').text('We have DRAW'));
+      case gameOverStates.DRAW:
+        this.modalPrompt.append($('<div>').addClass('title').text('We have DRAW'));
         this.window.css('background-color', 'white');
         break;
       case '':
-        this.modalPrompt.append($('<div>').text('Game interrupted by user'));
+        this.modalPrompt.append($('<div>').text('Game interrupted'));
         this.window.css('background-color', 'white');
         break;
       default:
     }
-
     // Update title
     this.titleText.text('Game Over');
     // Default modal prompt

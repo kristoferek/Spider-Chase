@@ -261,15 +261,18 @@ var Handle = function (gameObject, displayObject) {
       case gameObject.states.GAMEOVER:
         // Activate player information
         displayObject.updateGameInformation(gameObject.playerOne, gameObject.playerTwo, gameObject);
+
         // Player One wins
         if (gameObject.playerOne.power > 0 && gameObject.playerTwo.power <= 0) {
-          displayObject.modal.gameOverShow(gameObject.playerOne.customClass);
+          displayObject.modal.gameOverShow(gameObject.gameOverStates.PLAYERTWO_TURN, gameObject.gameOverStates, displayObject);
         // Player Two wins
         } else if (gameObject.playerOne.power <= 0 && gameObject.playerTwo.power > 0) {
-          displayObject.modal.gameOverShow(gameObject.playerTwo.customClass);
+          displayObject.modal.gameOverShow(gameObject.gameOverStates.PLAYERTWO_TURN, gameObject.gameOverStates, displayObject);
         // Draw
         } else if (gameObject.playerOne.power <= 0 && gameObject.playerTwo.power <= 0) {
-          displayObject.modal.gameOverShow(gameObject.playerTwo.customClass);
+          displayObject.modal.gameOverShow(gameObject.gameOverStates.DRAW, gameObject.gameOverStates, displayObject);
+        } else {
+          displayObject.modal.gameOverShow('', gameObject.gameOverStates);
         }
 
         $(window).keydown(function (event) {

@@ -322,6 +322,12 @@
         DEFEND: true
       };
 
+      this.gameOverStates = {
+        PLAYERONE_WINS: 'playerOne',
+        PLAYERTWO_WINS: 'playerTwo',
+        DRAW: 'draw'
+      }
+
       // Initialize game and battle state
       this.state = this.states.START;
 
