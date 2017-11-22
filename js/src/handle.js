@@ -264,7 +264,7 @@ var Handle = function (gameObject, displayObject) {
 
         // Player One wins
         if (gameObject.playerOne.power > 0 && gameObject.playerTwo.power <= 0) {
-          displayObject.modal.gameOverShow(gameObject.gameOverStates.PLAYERTWO_WINS, gameObject.gameOverStates, displayObject);
+          displayObject.modal.gameOverShow(gameObject.gameOverStates.PLAYERONE_WINS, gameObject.gameOverStates, displayObject);
         // Player Two wins
         } else if (gameObject.playerOne.power <= 0 && gameObject.playerTwo.power > 0) {
           displayObject.modal.gameOverShow(gameObject.gameOverStates.PLAYERTWO_WINS, gameObject.gameOverStates, displayObject);
