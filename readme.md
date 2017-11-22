@@ -20,7 +20,7 @@ Javascript code is organizad on following layers:
   2. *Modal object* - displays and hides different type modal windows depending on game state
   
 3. **Handle.js** includes
-  1. Handle object - responsible for game logic and event loop as well as battle decision update
+  * Handle object - responsible for game logic and event loop as well as battle decision update
   
 4. **App.js** initialize and strats the game
 
