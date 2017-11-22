@@ -14,11 +14,14 @@ Javascript code is organizad on following layers:
   3. *Board* object - stores and updates board of empty fields, weapon, and obstacles
   3. *Weapon* object - stores and updates filed position, power
   4. *NextStep* object - stores and updates actual player possible movement path
+  
 2. **Display.js** includes
   1. *Display object* - responsible for displaying and hiding board, players and weapons by adding or removing css classes
   2. *Modal object* - displays and hides different type modal windows depending on game state
+  
 3. **Handle.js** includes
   1. Handle object - responsible for game logic and event loop as well as battle decision update
+  
 4. **App.js** initialize and strats the game
 
 ## Styling
